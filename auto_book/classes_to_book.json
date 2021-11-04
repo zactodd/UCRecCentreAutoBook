@@ -1,3 +1,28 @@
 {
-  "Day": [{"Class": "Class1", "Time": "HH:MM:SS"]]
+  "monday": [
+    {"class": "Zumba", "time": "17:10:00"},
+    {"class": "Pump", "time": "18:10:00"}
+  ],
+  "tuesday": [
+    {"class": "Run Canterbury", "time": "17:10:00"},
+    {"class": "Zumba", "time": "17:10:00"}
+  ],
+  "wednesday": [
+    {"class": "Supercircuit", "time": "17:10:00"}
+  ],
+  "thursday": [
+    {"class": "Zumba", "time": "16:10:00"},
+    {"class": "Run Canterbury", "time": "17:10:00"}
+  ],
+  "friday": [
+    {"class": "HIIT30", "time": "16:30:00"},
+    {"class": "Pump", "time": "17:10:00"}
+  ],
+  "saturday": [
+    {"class": "Zumba", "time": "10:30:00"}
+  ],
+  "sunday": [
+    {"class": "Pump", "time": "9:30:00"},
+    {"class": "Zumba", "time": "10:30:00"}
+  ]
 }
