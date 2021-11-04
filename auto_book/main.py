@@ -1,9 +1,13 @@
 from auto_book import utils
+import json
 import datetime
 
 if __name__ == "__main__":
     booked_today = False
-    classes_to_book = {}
+
+    with open('classes_to_book.json') as f:
+        classes_to_book = json.load(f)
+
     now = datetime.datetime.now()
     opening = utils.opening(now)
     while True:
