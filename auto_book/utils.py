@@ -3,6 +3,7 @@ import datetime
 import json
 
 
+USER_ID = ''
 FACILITY_ID = 'dbf12cf8-3674-4daf-903b-2cead0b7ece1'
 CLASS_QUERY = f'https://calendar.mywellness.com/v2/enduser/class/Search?eventTypes=Class&facilityId={FACILITY_ID}'
 OPENING_TIME = datetime.time(hour=6, minute=1)
@@ -39,3 +40,10 @@ def today_opening_classes():
     opening_tomorrow = opening + datetime.timedelta(days=1)
     return get_classes_between_dates(opening, opening_tomorrow)
 
+
+def opening(dt):
+    return datetime.datetime(dt.year, dt.month, dt.day, OPENING_TIME.hour, OPENING_TIME.minute, 0) + OPENING_DELTA
+
+
+def book(user_id, class_id, class_time):
+    pass
