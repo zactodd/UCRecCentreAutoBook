@@ -4,6 +4,7 @@
     {"class": "Pump", "time": "18:10:00"}
   ],
   "tuesday": [
+    {"class": "FIT50", "time": "12:05:00"},
     {"class": "Run Canterbury", "time": "17:10:00"},
     {"class": "Zumba", "time": "17:10:00"}
   ],
@@ -11,6 +12,7 @@
     {"class": "Supercircuit", "time": "17:10:00"}
   ],
   "thursday": [
+    {"class": "FIT50", "time": "12:05:00"},
     {"class": "Zumba", "time": "16:10:00"},
     {"class": "Run Canterbury", "time": "17:10:00"}
   ],
