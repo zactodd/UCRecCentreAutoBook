@@ -1,6 +1,6 @@
 # Setup
 Download or clone repo.
-Running like program.
+Running the program in terminal wiht.
 ```bash
 python auto_book/main.py
 ```
@@ -8,7 +8,7 @@ Input your username (Email) and password for the reccentre when requested.
 
 
 # Edit Classes
-You can change classes by editing the json file auto_book/classes_to_book
+You can change classes by editing the json file auto_book/classes_to_book.json
 ```json
 {
   "day1": [
