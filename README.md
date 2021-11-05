@@ -1,7 +1,7 @@
 # Setup
 Download or clone repoitory.
 Running like program.
-```
+```bash
 python auto_book/main.py
 ```
 Input your username (Email) and password for the reccentre when requested.
@@ -19,7 +19,7 @@ You can change classes by editing the json file auto_book/classes_to_book
 The day must be lowercase, the class must be written the same as it is written in the app on website including spaces and spial chaters, the time is in 24hour time.
 
 For example:
-```
+```json
 {
   "monday": [
       {"class": "Zumba", "time": "17:10:00"},
