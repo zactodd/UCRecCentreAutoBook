@@ -4,7 +4,9 @@ import json
 
 URL = f'https://calendar.mywellness.com/v2/enduser/class/'
 
-USER_ID = '582da42c-6252-45cc-a9d5-4bf028b54682'
+with open('user_info.json') as f:
+    USER_ID = json.load(f)['userId']
+
 FACILITY_ID = 'dbf12cf8-3674-4daf-903b-2cead0b7ece1'
 FACILITY_QUERY = f'Search?eventTypes=Class&facilityId={FACILITY_ID}'
 BOOKING_QUERY = 'Book?_c=en-GB'
@@ -19,30 +21,21 @@ HEADERS = {
 
 
 def get_classes_between_dates(date_from, date_to):
-    """
-    Get class between dates
-    """
     date_from = date_from.strftime('%Y-%m-%d')
     date_to = date_to.strftime('%Y-%m-%d')
     url = f'{URL}{FACILITY_QUERY}&fromDate={date_from}&toDate={date_to}'
     response = requests.get(url)
     classes_info = json.loads(response.text)
-    return {(i['name'], i['actualizedStartDateTime'][-8:]): i['id'] for i in classes_info}
+    return {(i['name'], i['actualizedStartDateTime'][-10:]): i['id'] for i in classes_info}
 
 
 def today_classes():
-    """
-    Get today classes
-    """
     today = datetime.datetime.now()
     tomorrow = today + datetime.timedelta(days=1)
     return get_classes_between_dates(today, tomorrow)
 
 
 def today_opening_classes():
-    """
-    Get today classes
-    """
     today = datetime.datetime.now()
     opening = today + OPENING_DELTA
     opening_tomorrow = opening + datetime.timedelta(days=1)
@@ -50,12 +43,11 @@ def today_opening_classes():
 
 
 def opening(dt):
-    ot = dt.replace(hour=OPENING_TIME.hour, minute=OPENING_TIME.minute)
-    return ot
+    return dt.replace(hour=OPENING_TIME.hour, minute=OPENING_TIME.minute)
 
 
 def book(user_id, class_id, dt):
-    response = requests.post(
+    requests.post(
         headers=HEADERS,
         url=f'{URL}{BOOKING_QUERY}',
         json={'userId': user_id, 'classId': class_id, 'partitionDate': dt},
