@@ -1,5 +1,5 @@
 # Setup
-Download or clone repoitory.
+Download or clone repo.
 Running like program.
 ```bash
 python auto_book/main.py
