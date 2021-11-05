@@ -27,7 +27,7 @@ HEADERS = {
     'x-mwapps-clientversion': '1.3.3-1096,enduserweb'
 }
 
-CLASSES_TO_BOOK = __file__[:__file__.rindex('/') + 1] + 'classes_to_book.json'
+CLASSES_TO_BOOK = __file__[:__file__.rindex('/' if "/" in __file__ else '\\') + 1] + 'classes_to_book.json'
 
 
 def get_classes_between_dates(date_from, date_to):
