@@ -63,8 +63,7 @@ def login(username, password):
         json={"username": username, "password": password, "keepMeLoggedIn": False},
     )
     login_info = json.loads(response.text)
-    data = login_info['data']['facilities'][0]
-    return data['id'], login_info['token']
+    return login_info['data']['userContext']['id'], login_info['token']
 
 
 if __name__ == "__main__":
@@ -81,7 +80,7 @@ if __name__ == "__main__":
             valid_login = True
         except:
             print('Invalid username or password.')
-    print('Login successful.')
+    print('Login successful')
 
     now = datetime.datetime.now()
     opening = now.replace(hour=6, minute=1)
@@ -93,7 +92,6 @@ if __name__ == "__main__":
                 now = datetime.datetime.now()
 
             user_id, token = login(username, password)
-
             day = calendar.day_name[(now + OPENING_DELTA).weekday()].lower()
             if day in classes_to_book:
                 bookings = classes_to_book[day]
