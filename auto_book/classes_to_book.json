@@ -25,7 +25,7 @@
     {"class": "Zumba", "time": "10:30:00"}
   ],
   "sunday": [
-    {"class": "Pump", "time": "9:30:00"},
+    {"class": "Pump", "time": "09:30:00"},
     {"class": "Zumba", "time": "10:30:00"}
   ]
 }
