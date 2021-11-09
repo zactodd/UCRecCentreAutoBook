@@ -67,10 +67,7 @@ def login(username, password):
 
 
 if __name__ == "__main__":
-    # Get classes
-    with open(CLASSES_TO_BOOK) as f:
-        classes_to_book = json.load(f)
-
+    # Validate login info
     valid_login = False
     while not valid_login:
         try:
@@ -84,14 +81,24 @@ if __name__ == "__main__":
 
     now = datetime.datetime.now()
     opening = now.replace(hour=6, minute=1)
-
     while True:
         try:
+            try:
+                with open(CLASSES_TO_BOOK) as f:
+                    classes_to_book = json.load(f)
+            except Exception as e:
+                print(f'Error Opening {CLASSES_TO_BOOK}')
+                print(e)
+                break
+
             # Block until the next opening time
             while now < opening:
                 now = datetime.datetime.now()
 
+            # Re-login if the token has expired
             user_id, token = login(username, password)
+
+            # Book if there are classes to book to today
             day = calendar.day_name[(now + OPENING_DELTA).weekday()].lower()
             if day in classes_to_book:
                 bookings = classes_to_book[day]
