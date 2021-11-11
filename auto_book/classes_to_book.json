@@ -15,7 +15,8 @@
   "wednesday": [
     {"class": "FIT50", "time": "07:00:00"},
     {"class": "Zumba", "time": "12:05:00"},
-    {"class": "Supercircuit", "time": "17:10:00"}
+    {"class": "Supercircuit", "time": "17:10:00"},
+    {"class": "HIIT", "time": "17:20:00"}
   ],
   "thursday": [
     {"class": "FIT50", "time": "07:00:00"},
