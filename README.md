@@ -32,5 +32,3 @@ For example:
     ]
 }
  ```
- 
- Note currently the program reads the classes to book at the start of the program so you will have to restart if you want to change them after running.
