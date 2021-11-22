@@ -80,7 +80,7 @@ if __name__ == "__main__":
     print('Login successful')
 
     now = datetime.datetime.now()
-    opening = now.replace(hour=6, minute=0, second=30, microsecond=0)
+    opening = now.replace(hour=6, minute=2, second=0, microsecond=0)
     while True:
         try:
             try:
