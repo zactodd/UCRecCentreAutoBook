@@ -3,6 +3,7 @@ import calendar
 import requests
 import datetime
 import json
+import random
 
 URL = 'https://calendar.mywellness.com/v2/enduser/class/'
 SERVICE_URL = 'https://services.mywellness.com/Application/EC1D38D7-D359-48D0-A60C-D8C0B8FB9DF9/'
@@ -12,6 +13,8 @@ BOOKING_QUERY = 'Book'
 LOGIN_QUERY = 'Login'
 
 OPENING_DELTA = datetime.timedelta(days=5)
+TEN_MINUTES = datetime.timedelta(minutes=10)
+ONE_MINUTE = datetime.timedelta(minutes=1)
 
 HEADERS = {
     'accept': '*/*',
@@ -37,6 +40,13 @@ def get_classes_between_dates(date_from, date_to):
     response = requests.get(url)
     classes_info = json.loads(response.text)
     return {(i['name'], i['actualizedStartDateTime'][-8:]): i['id'] for i in classes_info}
+
+
+def random_date_between(start_date, end_date):
+    delta = end_date - start_date
+    int_delta = (delta.days * 86400) + delta.seconds
+    random_second = random.randint(0, int_delta)
+    return start_date + datetime.timedelta(seconds=random_second)
 
 
 def today_opening_classes():
@@ -80,7 +90,8 @@ if __name__ == "__main__":
     print('Login successful')
 
     now = datetime.datetime.now()
-    opening = now.replace(hour=6, minute=2, second=0, microsecond=0)
+    opening = now.replace(hour=6, minute=0, second=0, microsecond=0)
+    opening = random_date_between(opening + ONE_MINUTE, opening + TEN_MINUTES)
     while True:
         try:
             try:
