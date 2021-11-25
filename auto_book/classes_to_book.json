@@ -9,6 +9,7 @@
   "tuesday": [
     {"class": "FIT50", "time": "12:05:00"},
     {"class": "Run Canterbury", "time": "17:10:00"},
+    {"class": "Run Canterbury", "time": "17:30:00"},
     {"class": "Zumba", "time": "17:10:00"},
     {"class": "Zumba", "time": "17:20:00"}
   ],
@@ -23,7 +24,8 @@
     {"class": "FIT50", "time": "12:05:00"},
     {"class": "Zumba", "time": "16:10:00"},
     {"class": "Zumba", "time": "16:20:00"},
-    {"class": "Run Canterbury", "time": "17:10:00"}
+    {"class": "Run Canterbury", "time": "17:10:00"},
+    {"class": "Run Canterbury", "time": "17:30:00"}
   ],
   "friday": [
     {"class": "HIIT30", "time": "16:30:00"},
