@@ -128,13 +128,10 @@ def book_classes_today(username, password, bookings, tol=TOLERANCE):
 
 if __name__ == "__main__":
     # Validate login info
-    while True:
-        username = input('Username (Email): ')
-        password = getpass.getpass('Password: ')
-        if login(username, password):
-            break
-        else:
-            print('Invalid username or password.')
+    username, password = input('Username (Email): '), getpass.getpass('Password: ')
+    while login(username, password):
+        username, password = input('Username (Email): '), getpass.getpass('Password: ')
+        print('Invalid username or password.')
     print('Login successful')
 
     # Get opening time
