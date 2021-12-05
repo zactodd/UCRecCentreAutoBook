@@ -15,6 +15,10 @@ LOGIN_QUERY = 'Login'
 OPENING_DELTA = datetime.timedelta(days=5)
 TEN_MINUTES = datetime.timedelta(minutes=10)
 ONE_MINUTE = datetime.timedelta(minutes=1)
+DATE_FORMAT = '%Y-%m-%d'
+TIME_FORMAT = '%H:%M:%S'
+DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
+TOLERANCE = datetime.timedelta(hours=1, minutes=30)
 
 HEADERS = {
     'accept': '*/*',
@@ -39,7 +43,8 @@ def get_classes_between_dates(date_from, date_to):
     url = f'{URL}{FACILITY_QUERY}&fromDate={date_from}&toDate={date_to}'
     response = requests.get(url)
     classes_info = json.loads(response.text)
-    return {(i['name'], i['actualizedStartDateTime'][-8:]): i['id'] for i in classes_info}
+    return [(i['name'], datetime.datetime.strptime(i['actualizedStartDateTime'], DATETIME_FORMAT), i['id'])
+            for i in classes_info]
 
 
 def random_date_between(start_date, end_date):
@@ -76,6 +81,15 @@ def login(username, password):
     return login_info['data']['userContext']['id'], login_info['token']
 
 
+def book_classes_today(username, password, bookings, tol=TOLERANCE):
+    user_id, token = login(username, password)
+    date_str = int((now + OPENING_DELTA).strftime(DATE_FORMAT))
+    for n, dt, idx in today_opening_classes():
+        ct = dt.time()
+        if any(n == m and bdt.time() - tol <= ct <= bdt.time() + tol for m, bdt in bookings):
+            book(user_id, idx, date_str, token)
+
+
 if __name__ == "__main__":
     # Validate login info
     valid_login = False
@@ -94,33 +108,24 @@ if __name__ == "__main__":
     opening = random_date_between(opening + ONE_MINUTE, opening + TEN_MINUTES)
     while True:
         try:
-            try:
-                with open(CLASSES_TO_BOOK) as f:
-                    classes_to_book = json.load(f)
-            except Exception as e:
-                print(f'Error Opening {CLASSES_TO_BOOK}')
-                print(e)
-                break
+            with open(CLASSES_TO_BOOK) as f:
+                bookings_json = json.load(f)
+            daily_bookings = {d: [(i['class'], datetime.datetime.strptime(i['time'], TIME_FORMAT)) for i in info]
+                              for d, info in bookings_json.items()}
 
             # Block until the next opening time
             while now < opening:
                 now = datetime.datetime.now()
 
-            # Re-login if the token has expired
-            user_id, token = login(username, password)
-
-            # Book if there are classes to book to today
+            # Book classes opening today
             day = calendar.day_name[(now + OPENING_DELTA).weekday()].lower()
-            if day in classes_to_book:
-                bookings = classes_to_book[day]
-                opening_classes = today_opening_classes()
+            if day in daily_bookings:
+                book_classes_today(username, password, daily_bookings[day])
 
-                # Book classes
-                for booking in bookings:
-                    slot_pk = (booking['class'], booking['time'])
-                    if slot_pk in opening_classes:
-                        time_str = int((now + OPENING_DELTA).strftime('%Y%m%d'))
-                        book(user_id, opening_classes[slot_pk], time_str, token)
             opening += datetime.timedelta(days=1)
-        except Exception as e:
-            print(f'Error {e}')
+            opening = opening.replace(hour=6, minute=0, second=0, microsecond=0)
+            opening = random_date_between(opening + ONE_MINUTE, opening + TEN_MINUTES)
+        except json.JSONDecodeError as e:
+            print(f'Cannot read file at {CLASSES_TO_BOOK}. {e}')
+        except FileExistsError as e:
+            print(f'Cannot find file {CLASSES_TO_BOOK} {e}')
