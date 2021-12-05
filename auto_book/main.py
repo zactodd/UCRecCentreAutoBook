@@ -119,7 +119,7 @@ def book_classes_today(username, password, bookings, tol=TOLERANCE):
     :param tol: The tolerance of the booking times.
     """
     user_id, token = login(username, password)
-    date_str = int((now + OPENING_DELTA).strftime(DATE_FORMAT))
+    date_str = int((now + OPENING_DELTA).strftime('%Y%m%d'))
     for n, dt, idx in today_opening_classes():
         ct = dt.time()
         if any(n == m and bdt.time() - tol <= ct <= bdt.time() + tol for m, bdt in bookings):
@@ -127,7 +127,7 @@ def book_classes_today(username, password, bookings, tol=TOLERANCE):
 
 
 if __name__ == "__main__":
-    # Validate login info
+    # Validate login credentials
     username, password = input('Username (Email): '), getpass.getpass('Password: ')
     while login(username, password):
         username, password = input('Username (Email): '), getpass.getpass('Password: ')
