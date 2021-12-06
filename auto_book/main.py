@@ -107,7 +107,7 @@ def login(username, password):
         json={"username": username, "password": password, "keepMeLoggedIn": False},
     )
     login_info = json.loads(response.text)
-    return login_info['data']['userContext']['id'], login_info['token'] if login_info else None
+    return (login_info['data']['userContext']['id'], login_info['token']) if 'data' in login_info else None
 
 
 def book_classes_today(username, password, bookings, tol=TOLERANCE):
@@ -120,18 +120,17 @@ def book_classes_today(username, password, bookings, tol=TOLERANCE):
     """
     user_id, token = login(username, password)
     date_str = int((now + OPENING_DELTA).strftime('%Y%m%d'))
-    for n, dt, idx in today_opening_classes():
-        ct = dt.time()
-        if any(n == m and bdt.time() - tol <= ct <= bdt.time() + tol for m, bdt in bookings):
+    for n, ct, idx in today_opening_classes():
+        if any(n == m and abs(ct - datetime.datetime.combine(ct, bt.time())) <= tol for m, bt in bookings):
             book(user_id, idx, token, date_str)
 
 
 if __name__ == "__main__":
     # Validate login credentials
     username, password = input('Username (Email): '), getpass.getpass('Password: ')
-    while login(username, password):
-        username, password = input('Username (Email): '), getpass.getpass('Password: ')
+    while not login(username, password):
         print('Invalid username or password.')
+        username, password = input('Username (Email): '), getpass.getpass('Password: ')
     print('Login successful')
 
     # Get opening time
