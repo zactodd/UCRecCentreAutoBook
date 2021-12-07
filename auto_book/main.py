@@ -5,6 +5,7 @@ import datetime
 import json
 import random
 
+# Mywellness API
 URL = 'https://calendar.mywellness.com/v2/enduser/class/'
 SERVICE_URL = 'https://services.mywellness.com/Application/EC1D38D7-D359-48D0-A60C-D8C0B8FB9DF9/'
 FACILITY_ID = 'dbf12cf8-3674-4daf-903b-2cead0b7ece1'
@@ -12,6 +13,7 @@ FACILITY_QUERY = f'Search?eventTypes=Class&facilityId={FACILITY_ID}'
 BOOKING_QUERY = 'Book'
 LOGIN_QUERY = 'Login'
 
+# Datetime constants
 OPENING_DELTA = datetime.timedelta(days=5)
 TEN_MINUTES = datetime.timedelta(minutes=10)
 ONE_MINUTE = datetime.timedelta(minutes=1)
@@ -20,6 +22,7 @@ TIME_FORMAT = '%H:%M:%S'
 DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
 TOLERANCE = datetime.timedelta(hours=1, minutes=30)
 
+# Request headers
 HEADERS = {
     'accept': '*/*',
     'content-type': 'application/json',
@@ -34,6 +37,7 @@ HEADERS = {
     'x-mwapps-clientversion': '1.3.3-1096,enduserweb'
 }
 
+# Default path to booking file
 CLASSES_TO_BOOK = __file__[:__file__.rindex('/' if "/" in __file__ else '\\') + 1] + 'classes_to_book.json'
 
 
