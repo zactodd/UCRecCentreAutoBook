@@ -17,7 +17,6 @@ LOGIN_QUERY = 'Login'
 OPENING_DELTA = datetime.timedelta(days=5)
 TEN_MINUTES = datetime.timedelta(minutes=10)
 ONE_MINUTE = datetime.timedelta(minutes=1)
-DATE_FORMAT = '%Y-%m-%d'
 TIME_FORMAT = '%H:%M:%S'
 DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
 TOLERANCE = datetime.timedelta(hours=1, minutes=30)
