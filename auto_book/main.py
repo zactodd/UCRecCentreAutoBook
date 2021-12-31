@@ -1,7 +1,7 @@
 import getpass
 import calendar
 import requests
-import datetime
+from datetime import datetime, timedelta
 import json
 import random
 
@@ -14,12 +14,12 @@ BOOKING_QUERY = 'Book'
 LOGIN_QUERY = 'Login'
 
 # Datetime constants
-OPENING_DELTA = datetime.timedelta(days=5)
-TEN_MINUTES = datetime.timedelta(minutes=10)
-ONE_MINUTE = datetime.timedelta(minutes=1)
+OPENING_DELTA = timedelta(days=5)
+TEN_MINUTES = timedelta(minutes=10)
+ONE_MINUTE = timedelta(minutes=1)
 TIME_FORMAT = '%H:%M:%S'
 DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
-TOLERANCE = datetime.timedelta(hours=1, minutes=30)
+TOLERANCE = timedelta(hours=1, minutes=30)
 
 # Request headers
 HEADERS = {
@@ -37,23 +37,20 @@ HEADERS = {
 }
 
 # Default path to booking file
-CLASSES_TO_BOOK = __file__[:__file__.rindex('/' if "/" in __file__ else '\\') + 1] + 'classes_to_book.json'
+CLASSES_TO_BOOK = __file__[:__file__.rindex('/' if '/' in __file__ else '\\') + 1] + 'classes_to_book.json'
 
 
 def classes_between_dates(date_from, date_to):
     """
-    GEt all class info between two dates.
+    Get all class info between two dates.
     :param date_from: The date to start from.
     :param date_to: The date to end at.
     :return: A list of tuples containing the (name, datetime, id) of the classes between the two dates.
     """
-    date_from = date_from.strftime('%Y-%m-%d')
-    date_to = date_to.strftime('%Y-%m-%d')
-    url = f'{URL}{FACILITY_QUERY}&fromDate={date_from}&toDate={date_to}'
+    url = f'{URL}{FACILITY_QUERY}&fromDate={date_from:%Y-%m-%d}&toDate={date_to:%Y-%m-%d}'
     response = requests.get(url)
-    classes_info = json.loads(response.text)
-    return [(i['name'], datetime.datetime.strptime(i['actualizedStartDateTime'], DATETIME_FORMAT), i['id'])
-            for i in classes_info]
+    cls_info = json.loads(response.text)
+    return [(i['name'], datetime.strptime(i['actualizedStartDateTime'], DATETIME_FORMAT), i['id']) for i in cls_info]
 
 
 def random_date_between(date_from, date_to):
@@ -66,7 +63,7 @@ def random_date_between(date_from, date_to):
     delta = date_to - date_from
     int_delta = (delta.days * 86400) + delta.seconds
     random_second = random.randint(0, int_delta)
-    return date_from + datetime.timedelta(seconds=random_second)
+    return date_from + timedelta(seconds=random_second)
 
 
 def today_opening_classes():
@@ -74,9 +71,9 @@ def today_opening_classes():
     Get all classes that are open today.
     :return: A list of tuples containing the (name, datetime, id) of the classes today.
     """
-    today = datetime.datetime.now()
+    today = datetime.now()
     opening = today + OPENING_DELTA
-    opening_tomorrow = opening + datetime.timedelta(days=1)
+    opening_tomorrow = opening + timedelta(days=1)
     return classes_between_dates(opening, opening_tomorrow)
 
 
@@ -122,9 +119,9 @@ def book_classes_today(username, password, bookings, tol=TOLERANCE):
     :param tol: The tolerance of the booking times.
     """
     user_id, token = login(username, password)
-    date_str = int((now + OPENING_DELTA).strftime('%Y%m%d'))
+    date_str = f'{now + OPENING_DELTA:%Y%m%d}'
     for n, ct, idx in today_opening_classes():
-        if any(n == m and abs(ct - datetime.datetime.combine(ct, bt.time())) <= tol for m, bt in bookings):
+        if any(n == m and abs(ct - datetime.combine(ct, bt.time())) <= tol for m, bt in bookings):
             book(user_id, idx, token, date_str)
 
 
@@ -137,20 +134,20 @@ if __name__ == "__main__":
     print('Login successful')
 
     # Get opening time
-    now = datetime.datetime.now()
+    now = datetime.now()
     opening = now.replace(hour=6, minute=0, second=0, microsecond=0)
     opening = random_date_between(opening + ONE_MINUTE, opening + TEN_MINUTES)
     while True:
         try:
             # Block until the next opening time
             while now < opening:
-                now = datetime.datetime.now()
+                now = datetime.now()
 
             # Get classes to book
             with open(CLASSES_TO_BOOK) as f:
-                bookings_json = json.load(f)
-            daily_bookings = {d: [(i['class'], datetime.datetime.strptime(i['time'], TIME_FORMAT)) for i in info]
-                              for d, info in bookings_json.items()}
+                bookings = json.load(f)
+            daily_bookings = {d: [(i['class'], datetime.strptime(i['time'], TIME_FORMAT)) for i in info]
+                              for d, info in bookings.items()}
 
             # Book classes opening today
             day = calendar.day_name[(now + OPENING_DELTA).weekday()].lower()
@@ -158,7 +155,7 @@ if __name__ == "__main__":
                 book_classes_today(username, password, daily_bookings[day])
 
             # Push opening to next opening time
-            opening += datetime.timedelta(days=1)
+            opening += timedelta(days=1)
             opening = opening.replace(hour=6, minute=0, second=0, microsecond=0)
             opening = random_date_between(opening + ONE_MINUTE, opening + TEN_MINUTES)
 
