@@ -145,17 +145,14 @@ def book_class_on_opening(username, password, opening, booking_file=CLASSES_TO_B
     # Get classes to book
     with open(booking_file) as f:
         bookings = json.load(f)
-
     # Check if there are any bookings today
     day = calendar.day_name[(opening + OPENING_DELTA).weekday()].lower()
     if day not in bookings:
         return
-
     # Block until opening time
     now = datetime.now()
     while now < opening:
         now = datetime.now()
-
     # Book classes
     today_bookings = [(i['class'], datetime.strptime(i['time'], TIME_FORMAT)) for i in bookings[day]]
     book_classes_today(username, password, today_bookings, tol)
@@ -175,7 +172,7 @@ if __name__ == "__main__":
             username, password = input('Username (Email): '), getpass.getpass('Password: ')
         print('Login successful')
         while True:
-            book_class_on_opening(username, password, opening)
+            book_class_on_opening(username, password, opening, booking_file=CLASSES_TO_BOOK)
             # Push opening to next opening time
             opening += timedelta(days=1)
             opening = opening.replace(hour=6, minute=0, second=0, microsecond=0)
