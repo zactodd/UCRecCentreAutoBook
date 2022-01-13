@@ -22,8 +22,7 @@ TIME_FORMAT = '%H:%M:%S'
 DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
 TOLERANCE = timedelta(hours=1, minutes=30)
 
-
-# TODO ass proper script runnering
+# TODO have proper script input
 WITH_INPUTS = False
 
 # Request headers
@@ -134,43 +133,66 @@ def book_classes_today(username, password, bookings, tol=TOLERANCE):
             book(user_id, class_id, token, date_str)
 
 
+def book_class_on_opening(username, password, opening, booking_file=CLASSES_TO_BOOK, tol=TOLERANCE):
+    """
+    Book classes on opening.
+    :param username: User's username.
+    :param password: User's password.
+    :param opening: The opening time.
+    :param booking_file: THe json file with the booking info.
+    :param tol: The time tolerance around booking.
+    """
+    # Block until the next opening time
+    now = datetime.now()
+    while now < opening:
+        now = datetime.now()
+
+    # Get classes to book
+    with open(booking_file) as f:
+        bookings = json.load(f)
+    daily_bookings = {d: [(i['class'], datetime.strptime(i['time'], TIME_FORMAT)) for i in info]
+                      for d, info in bookings.items()}
+
+    # Book classes opening today
+    day = calendar.day_name[(opening + OPENING_DELTA).weekday()].lower()
+    if day in daily_bookings:
+        book_classes_today(username, password, daily_bookings[day], tol)
+
+
 if __name__ == "__main__":
-    # Validate login credentials
-    if RUN_LOCAL:
+    # Get opening time
+    now = datetime.now()
+    opening = now.replace(hour=6, minute=0, second=0, microsecond=0)
+    opening = random_date_between(opening + ONE_MINUTE, opening + THREE_MINUTES)
+
+    if WITH_INPUTS:
+        # Validate login credentials
         username, password = input('Username (Email): '), getpass.getpass('Password: ')
         while not login(username, password):
             print('Invalid username or password.')
             username, password = input('Username (Email): '), getpass.getpass('Password: ')
         print('Login successful')
+
+        now = datetime.now()
+        opening = now.replace(hour=6, minute=0, second=0, microsecond=0)
+        opening = random_date_between(opening + ONE_MINUTE, opening + THREE_MINUTES)
+        while True:
+            try:
+                book_class_on_opening(username, password, opening)
+                # Push opening to next opening time
+                opening += timedelta(days=1)
+                opening = opening.replace(hour=6, minute=0, second=0, microsecond=0)
+                opening = random_date_between(opening + ONE_MINUTE, opening + THREE_MINUTES)
+
+            except json.JSONDecodeError as e:
+                print(f'Cannot read file at {CLASSES_TO_BOOK}. {e}')
+            except FileExistsError as e:
+                print(f'Cannot find file {CLASSES_TO_BOOK} {e}')
     else:
+        # Environment login credentials
         username, password = os.environ['USERNAME'], os.environ['PASSWORD']
-
-    # Get opening time
-    now = datetime.now()
-    opening = now.replace(hour=6, minute=0, second=0, microsecond=0)
-    opening = random_date_between(opening + ONE_MINUTE, opening + THREE_MINUTES)
-    while True:
         try:
-            # Block until the next opening time
-            while now < opening:
-                now = datetime.now()
-
-            # Get classes to book
-            with open(CLASSES_TO_BOOK) as f:
-                bookings = json.load(f)
-            daily_bookings = {d: [(i['class'], datetime.strptime(i['time'], TIME_FORMAT)) for i in info]
-                              for d, info in bookings.items()}
-
-            # Book classes opening today
-            day = calendar.day_name[(opening + OPENING_DELTA).weekday()].lower()
-            if day in daily_bookings:
-                book_classes_today(username, password, daily_bookings[day])
-
-            # Push opening to next opening time
-            opening += timedelta(days=1)
-            opening = opening.replace(hour=6, minute=0, second=0, microsecond=0)
-            opening = random_date_between(opening + ONE_MINUTE, opening + THREE_MINUTES)
-
+            book_class_on_opening(username, password, opening, booking_file=CLASSES_TO_BOOK)
         except json.JSONDecodeError as e:
             print(f'Cannot read file at {CLASSES_TO_BOOK}. {e}')
         except FileExistsError as e:
