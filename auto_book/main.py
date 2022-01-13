@@ -37,7 +37,12 @@ HEADERS = {
 }
 
 # Default path to booking file
-CLASSES_TO_BOOK = __file__[:__file__.rindex('/' if '/' in __file__ else '\\') + 1] + 'classes_to_book.json'
+if '/' in __file__:
+    CLASSES_TO_BOOK = __file__[__file__.rfind('/') + 1] + 'classes_to_book.json'
+elif '\\' in __file__:
+    CLASSES_TO_BOOK = __file__[__file__.rfind('\\') + 1] + 'classes_to_book.json'
+else:
+    CLASSES_TO_BOOK = 'classes_to_book.json'
 
 
 def classes_between_dates(date_from, date_to):
