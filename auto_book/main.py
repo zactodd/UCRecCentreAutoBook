@@ -172,28 +172,14 @@ if __name__ == "__main__":
             print('Invalid username or password.')
             username, password = input('Username (Email): '), getpass.getpass('Password: ')
         print('Login successful')
-
-        now = datetime.now()
-        opening = now.replace(hour=6, minute=0, second=0, microsecond=0)
-        opening = random_date_between(opening + ONE_MINUTE, opening + THREE_MINUTES)
         while True:
-            try:
-                book_class_on_opening(username, password, opening)
-                # Push opening to next opening time
-                opening += timedelta(days=1)
-                opening = opening.replace(hour=6, minute=0, second=0, microsecond=0)
-                opening = random_date_between(opening + ONE_MINUTE, opening + THREE_MINUTES)
-
-            except json.JSONDecodeError as e:
-                print(f'Cannot read file at {CLASSES_TO_BOOK}. {e}')
-            except FileExistsError as e:
-                print(f'Cannot find file {CLASSES_TO_BOOK} {e}')
+            book_class_on_opening(username, password, opening)
+            # Push opening to next opening time
+            opening += timedelta(days=1)
+            opening = opening.replace(hour=6, minute=0, second=0, microsecond=0)
+            opening = random_date_between(opening + ONE_MINUTE, opening + THREE_MINUTES)
     else:
         # Environment login credentials
         username, password = os.environ['USERNAME'], os.environ['PASSWORD']
-        try:
-            book_class_on_opening(username, password, opening, booking_file=CLASSES_TO_BOOK)
-        except json.JSONDecodeError as e:
-            print(f'Cannot read file at {CLASSES_TO_BOOK}. {e}')
-        except FileExistsError as e:
-            print(f'Cannot find file {CLASSES_TO_BOOK} {e}')
+        book_class_on_opening(username, password, opening, booking_file=CLASSES_TO_BOOK)
+
