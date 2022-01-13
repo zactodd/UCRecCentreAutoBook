@@ -1,0 +1,44 @@
+name: Book new classes
+
+on:
+  schedule:
+    - cron: '1 17 * * *' # runs at 17:01 UTC everyday which is 06:01 in NZDT
+
+  workflow_dispatch:
+
+jobs:
+  book-classes:
+    runs-on: ubuntu-latest
+    steps:
+      # This step allows the workflow to access script sin the repo
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      # This step set ups python in the virtual machine
+      - name: Setup Python Environment
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+
+      # Install packages
+      - name: Install Requirements
+        run: pip install -r requirements.txt
+
+      # This step sets the timezone
+      - name: Set timezone to New Zealand
+        uses: szenius/set-timezone@v1.0
+        with:
+          timezoneLinux: "Pacific/Auckland"
+
+      # This step will execute the booking script in the virtual machine
+      - name: Execute booking script
+        working-directory: ./auto_book
+        env:
+          # Set up username/password from GitHUb secrets so they can be accessed from the python script
+          # Use them like:  username = os.environ['USER']
+          #                 password = os.environ['PW']
+          USER: ${{ secrets.USERNAME }}
+          PW: ${{ secrets.PASSWORD }}
+        run: |
+          # Run script to book new classes.
+          python main.py
