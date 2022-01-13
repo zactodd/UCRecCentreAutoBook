@@ -47,10 +47,10 @@ else:
 
 def classes_between_dates(date_from, date_to):
     """
-    Get all class info between two dates.
+    Get all class info between and including two dates.
     :param date_from: The date to start from.
     :param date_to: The date to end at.
-    :return: A list of tuples containing the (name, datetime, id) of the classes between the two dates.
+    :return: A list of tuples containing the (name, datetime, id) of the classes between and including the two dates.
     """
     url = f'{URL}{FACILITY_QUERY}&fromDate={date_from:%Y-%m-%d}&toDate={date_to:%Y-%m-%d}'
     response = requests.get(url)
