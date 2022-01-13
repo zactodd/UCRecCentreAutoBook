@@ -35,10 +35,10 @@ jobs:
         working-directory: ./auto_book
         env:
           # Set up username/password from GitHUb secrets so they can be accessed from the python script
-          # Use them like:  username = os.environ['USER']
-          #                 password = os.environ['PW']
-          USER: ${{ secrets.USERNAME }}
-          PW: ${{ secrets.PASSWORD }}
+          # Use them like:  username = os.environ['USERNAME']
+          #                 password = os.environ['PASSWORD']
+          USERNAME: ${{ secrets.USERNAME }}
+          PASSWORD: ${{ secrets.PASSWORD }}
         run: |
           # Run script to book new classes.
           python main.py
