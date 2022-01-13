@@ -71,10 +71,8 @@ def today_opening_classes():
     Get all classes that are open today.
     :return: A list of tuples containing the (name, datetime, id) of the classes today.
     """
-    today = datetime.now()
-    opening = today + OPENING_DELTA
-    opening_tomorrow = opening + timedelta(days=1)
-    return classes_between_dates(opening, opening_tomorrow)
+    opening = datetime.now() + OPENING_DELTA
+    return classes_between_dates(opening, opening)
 
 
 def book(user_id, class_id, token, date):
