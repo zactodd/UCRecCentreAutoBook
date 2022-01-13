@@ -15,8 +15,8 @@ LOGIN_QUERY = 'Login'
 
 # Datetime constants
 OPENING_DELTA = timedelta(days=5)
-TEN_MINUTES = timedelta(minutes=10)
 ONE_MINUTE = timedelta(minutes=1)
+THREE_MINUTES = timedelta(minutes=3)
 TIME_FORMAT = '%H:%M:%S'
 DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
 TOLERANCE = timedelta(hours=1, minutes=30)
@@ -88,7 +88,7 @@ def book(user_id, class_id, token, date):
     requests.post(
         headers=headers,
         url=f'{URL}{BOOKING_QUERY}',
-        json={'userId': user_id, 'classId': class_id, 'partitionDate': date},
+        json={'userId': user_id, 'classId': class_id, 'partitionDate': int(date)},
     )
 
 
@@ -118,9 +118,10 @@ def book_classes_today(username, password, bookings, tol=TOLERANCE):
     """
     user_id, token = login(username, password)
     date_str = f'{now + OPENING_DELTA:%Y%m%d}'
-    for n, ct, idx in today_opening_classes():
-        if any(n == m and abs(ct - datetime.combine(ct, bt.time())) <= tol for m, bt in bookings):
-            book(user_id, idx, token, date_str)
+    for class_name, class_time, class_id in today_opening_classes():
+        if any(class_name == book_name and abs(class_time - datetime.combine(class_time, book_time.time())) <= tol
+               for book_name, book_time in bookings):
+            book(user_id, class_id, token, date_str)
 
 
 if __name__ == "__main__":
@@ -134,7 +135,7 @@ if __name__ == "__main__":
     # Get opening time
     now = datetime.now()
     opening = now.replace(hour=6, minute=0, second=0, microsecond=0)
-    opening = random_date_between(opening + ONE_MINUTE, opening + TEN_MINUTES)
+    opening = random_date_between(opening + ONE_MINUTE, opening + THREE_MINUTES)
     while True:
         try:
             # Block until the next opening time
@@ -148,14 +149,14 @@ if __name__ == "__main__":
                               for d, info in bookings.items()}
 
             # Book classes opening today
-            day = calendar.day_name[(now + OPENING_DELTA).weekday()].lower()
+            day = calendar.day_name[(opening + OPENING_DELTA).weekday()].lower()
             if day in daily_bookings:
                 book_classes_today(username, password, daily_bookings[day])
 
             # Push opening to next opening time
             opening += timedelta(days=1)
             opening = opening.replace(hour=6, minute=0, second=0, microsecond=0)
-            opening = random_date_between(opening + ONE_MINUTE, opening + TEN_MINUTES)
+            opening = random_date_between(opening + ONE_MINUTE, opening + THREE_MINUTES)
 
         except json.JSONDecodeError as e:
             print(f'Cannot read file at {CLASSES_TO_BOOK}. {e}')
