@@ -4,6 +4,7 @@ import requests
 from datetime import datetime, timedelta
 import json
 import random
+import os
 
 # Mywellness API
 URL = 'https://calendar.mywellness.com/v2/enduser/class/'
@@ -20,6 +21,10 @@ THREE_MINUTES = timedelta(minutes=3)
 TIME_FORMAT = '%H:%M:%S'
 DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
 TOLERANCE = timedelta(hours=1, minutes=30)
+
+
+# TODO ass proper script runnering
+WITH_INPUTS = False
 
 # Request headers
 HEADERS = {
@@ -131,11 +136,14 @@ def book_classes_today(username, password, bookings, tol=TOLERANCE):
 
 if __name__ == "__main__":
     # Validate login credentials
-    username, password = input('Username (Email): '), getpass.getpass('Password: ')
-    while not login(username, password):
-        print('Invalid username or password.')
+    if RUN_LOCAL:
         username, password = input('Username (Email): '), getpass.getpass('Password: ')
-    print('Login successful')
+        while not login(username, password):
+            print('Invalid username or password.')
+            username, password = input('Username (Email): '), getpass.getpass('Password: ')
+        print('Login successful')
+    else:
+        username, password = os.environ['USERNAME'], os.environ['PASSWORD']
 
     # Get opening time
     now = datetime.now()
