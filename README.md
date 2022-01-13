@@ -35,6 +35,7 @@ For example:
 
 # Script Automation
 ## Github Actions
+First fork the repoitory.
 Set up 'secrets' for your username and password.
 - go to the repository settings
 - select 'secrets' (3rd from bottom on left hand menu)
