@@ -142,21 +142,23 @@ def book_class_on_opening(username, password, opening, booking_file=CLASSES_TO_B
     :param booking_file: THe json file with the booking info.
     :param tol: The time tolerance around booking.
     """
-    # Block until the next opening time
+    # Get classes to book
+    with open(booking_file) as f:
+        bookings = json.load(f)
+
+    # Check if there are any bookings today
+    day = calendar.day_name[(opening + OPENING_DELTA).weekday()].lower()
+    if day not in bookings:
+        return
+
+    # Block until opening time
     now = datetime.now()
     while now < opening:
         now = datetime.now()
 
-    # Get classes to book
-    with open(booking_file) as f:
-        bookings = json.load(f)
-    daily_bookings = {d: [(i['class'], datetime.strptime(i['time'], TIME_FORMAT)) for i in info]
-                      for d, info in bookings.items()}
-
-    # Book classes opening today
-    day = calendar.day_name[(opening + OPENING_DELTA).weekday()].lower()
-    if day in daily_bookings:
-        book_classes_today(username, password, daily_bookings[day], tol)
+    # Book classes
+    today_bookings = [(i['class'], datetime.strptime(i['time'], TIME_FORMAT)) for i in bookings[day]]
+    book_classes_today(username, password, today_bookings, tol)
 
 
 if __name__ == "__main__":
