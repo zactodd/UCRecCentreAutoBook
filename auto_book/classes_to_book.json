@@ -1,23 +1,18 @@
 {
   "monday": [
-    {"class": "FIT50", "time": "12:00:00"},
     {"class": "Zumba", "time": "17:00:00"},
     {"class": "Pump", "time": "18:00:00"}
   ],
   "tuesday": [
-    {"class": "FIT50", "time": "12:00:00"},
     {"class": "Run Canterbury", "time": "17:00:00"},
     {"class": "Zumba", "time": "17:00:00"}
   ],
   "wednesday": [
-    {"class": "FIT50", "time": "07:00:00"},
     {"class": "Zumba", "time": "12:00:00"},
     {"class": "Supercircuit", "time": "17:00:00"},
     {"class": "HIIT", "time": "17:00:00"}
   ],
   "thursday": [
-    {"class": "FIT50", "time": "07:00:00"},
-    {"class": "FIT50", "time": "12:00:00"},
     {"class": "Zumba", "time": "17:00:00"},
     {"class": "HIIT30", "time": "17:00:00"},
     {"class": "Run Canterbury", "time": "17:00:00"}
