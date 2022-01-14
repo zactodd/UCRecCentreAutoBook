@@ -36,9 +36,10 @@ For example:
 # Script Automation
 ## Github Actions
 First fork the repoitory.
-Set up 'secrets' for your username and password.
-- go to the repository settings
-- select 'secrets' (3rd from bottom on left hand menu)
-- select 'add new repository secret'. 
+
+Then you will need to setup 'secrets' for your username and password.
+- Go to the repository settings
+- Select 'secrets.
+- Select 'add new repository secret'. 
 - Create a secret for your username titled 'USERNAME' and a secret for your password named 'PASSWORD'.
 
