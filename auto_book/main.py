@@ -5,6 +5,15 @@ from datetime import datetime, timedelta
 import json
 import random
 import os
+import argparse
+
+
+# parser = argparse.ArgumentParser()
+# parser.add_argument('--username', type=str, help='Gym username.')
+# parser.add_argument('--password', type=str, help='Gym password.')
+# parser.add_argument('--bookings', type=str, help='Filepath of class to book json')
+# parser.add_argument('--tolerance', type=int, help='Tolerance between booking time and class time.')
+
 
 # Mywellness API
 URL = 'https://calendar.mywellness.com/v2/enduser/class/'
