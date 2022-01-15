@@ -5,14 +5,11 @@ from datetime import datetime, timedelta
 import json
 import random
 import os
+import sys
 import argparse
 
 
-# parser = argparse.ArgumentParser()
-# parser.add_argument('--username', type=str, help='Gym username.')
-# parser.add_argument('--password', type=str, help='Gym password.')
-# parser.add_argument('--bookings', type=str, help='Filepath of class to book json')
-# parser.add_argument('--tolerance', type=int, help='Tolerance between booking time and class time.')
+
 
 
 # Mywellness API
@@ -31,9 +28,6 @@ TIME_FORMAT = '%H:%M:%S'
 DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
 TOLERANCE = timedelta(hours=1, minutes=30)
 
-# TODO have proper script input
-WITH_INPUTS = False
-
 # Request headers
 HEADERS = {
     'accept': '*/*',
@@ -50,12 +44,15 @@ HEADERS = {
 }
 
 # Default path to booking file
-if '/' in __file__:
-    CLASSES_TO_BOOK = __file__[__file__.rfind('/') + 1] + 'classes_to_book.json'
-elif '\\' in __file__:
-    CLASSES_TO_BOOK = __file__[__file__.rfind('\\') + 1] + 'classes_to_book.json'
-else:
-    CLASSES_TO_BOOK = 'classes_to_book.json'
+CLASSES_TO_BOOK = f'{os.path.dirname(__file__)}\\classes_to_book.json'
+
+# Script arguments
+parser = argparse.ArgumentParser()
+parser.add_argument('username', type=str, help='Gym username.')
+parser.add_argument('password', type=str, help='Gym password.')
+parser.add_argument('-f', '--bookings', type=str, help='File path of class to book json.', default=CLASSES_TO_BOOK)
+parser.add_argument('-t', '--tolerance', type=int, help='Tolerance between booking time and class time.', default=90)
+parser.add_argument('-r', '--repeat', type=bool, help='If to repeat the script.', default=False, const=True, nargs='?')
 
 
 def classes_between_dates(date_from, date_to):
@@ -168,26 +165,28 @@ def book_class_on_opening(username, password, opening, booking_file=CLASSES_TO_B
 
 
 if __name__ == "__main__":
-    # Get opening time
+    # Read script arguments
+    kwargs = vars(parser.parse_args(sys.argv[1:]))
+
+    username, password = kwargs['username'], kwargs['password']
+    assert login(username, password), 'Invalid username or password.'
+
+    repeat_booking = kwargs['repeat']
+    booking_file = kwargs['bookings']
+    tolerance = timedelta(minutes=kwargs['tolerance'])
+
+    # Random booking start after opening
     now = datetime.now()
     opening = now.replace(hour=6, minute=0, second=0, microsecond=0)
     opening = random_date_between(opening + ONE_MINUTE, opening + THREE_MINUTES)
 
-    if WITH_INPUTS:
-        # Validate login credentials
-        username, password = input('Username (Email): '), getpass.getpass('Password: ')
-        while not login(username, password):
-            print('Invalid username or password.')
-            username, password = input('Username (Email): '), getpass.getpass('Password: ')
-        print('Login successful')
+    if repeat_booking:
         while True:
-            book_class_on_opening(username, password, opening, booking_file=CLASSES_TO_BOOK)
+            book_class_on_opening(username, password, opening, booking_file, tolerance)
             # Push opening to next opening time
             opening += timedelta(days=1)
             opening = opening.replace(hour=6, minute=0, second=0, microsecond=0)
             opening = random_date_between(opening + ONE_MINUTE, opening + THREE_MINUTES)
     else:
-        # Environment login credentials
-        username, password = os.environ['USERNAME'], os.environ['PASSWORD']
-        book_class_on_opening(username, password, opening, booking_file=CLASSES_TO_BOOK)
+        book_class_on_opening(username, password, opening, booking_file, tolerance)
 
