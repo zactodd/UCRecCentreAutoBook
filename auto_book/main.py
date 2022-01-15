@@ -1,4 +1,3 @@
-import getpass
 import calendar
 import requests
 from datetime import datetime, timedelta
@@ -7,10 +6,6 @@ import random
 import os
 import sys
 import argparse
-
-
-
-
 
 # Mywellness API
 URL = 'https://calendar.mywellness.com/v2/enduser/class/'
@@ -26,7 +21,6 @@ ONE_MINUTE = timedelta(minutes=1)
 THREE_MINUTES = timedelta(minutes=3)
 TIME_FORMAT = '%H:%M:%S'
 DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
-TOLERANCE = timedelta(hours=1, minutes=30)
 
 # Request headers
 HEADERS = {
@@ -44,7 +38,10 @@ HEADERS = {
 }
 
 # Default path to booking file
-CLASSES_TO_BOOK = f'{os.path.dirname(__file__)}\\classes_to_book.json'
+if '\\' in __file__ or '/' in __file__:
+    CLASSES_TO_BOOK = f'{os.path.dirname(__file__)}\\classes_to_book.json'
+else:
+    CLASSES_TO_BOOK = 'classes_to_book.json'
 
 # Script arguments
 parser = argparse.ArgumentParser()
@@ -123,7 +120,7 @@ def login(username, password):
     return (login_info['data']['userContext']['id'], login_info['token']) if 'data' in login_info else None
 
 
-def book_classes_today(username, password, bookings, tol=TOLERANCE):
+def book_classes_today(username, password, bookings, tol):
     """
     Book classes for today.
     :param username: User's username.
@@ -139,7 +136,7 @@ def book_classes_today(username, password, bookings, tol=TOLERANCE):
             book(user_id, class_id, token, date_str)
 
 
-def book_class_on_opening(username, password, opening, booking_file=CLASSES_TO_BOOK, tol=TOLERANCE):
+def book_class_on_opening(username, password, opening, booking_file, tol):
     """
     Book classes on opening.
     :param username: User's username.
@@ -180,13 +177,15 @@ if __name__ == "__main__":
     opening = now.replace(hour=6, minute=0, second=0, microsecond=0)
     opening = random_date_between(opening + ONE_MINUTE, opening + THREE_MINUTES)
 
+    # Book classes on opening
+    book_class_on_opening(username, password, opening, booking_file, tolerance)
+
     if repeat_booking:
         while True:
-            book_class_on_opening(username, password, opening, booking_file, tolerance)
             # Push opening to next opening time
             opening += timedelta(days=1)
             opening = opening.replace(hour=6, minute=0, second=0, microsecond=0)
             opening = random_date_between(opening + ONE_MINUTE, opening + THREE_MINUTES)
-    else:
-        book_class_on_opening(username, password, opening, booking_file, tolerance)
 
+            # Book classes on opening
+            book_class_on_opening(username, password, opening, booking_file, tolerance)
