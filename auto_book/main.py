@@ -162,7 +162,6 @@ def book_class_on_opening(username, password, opening, booking_file, tol):
 
 
 if __name__ == "__main__":
-    # Read script arguments
     kwargs = vars(parser.parse_args(sys.argv[1:]))
 
     username, password = kwargs['username'], kwargs['password']
@@ -179,13 +178,11 @@ if __name__ == "__main__":
 
     # Book classes on opening
     book_class_on_opening(username, password, opening, booking_file, tolerance)
+    
+    while repeat_booking:
+        # Push opening to next opening time
+        opening += timedelta(days=1)
+        opening = opening.replace(hour=6, minute=0, second=0, microsecond=0)
+        opening = random_date_between(opening + ONE_MINUTE, opening + THREE_MINUTES)
 
-    if repeat_booking:
-        while True:
-            # Push opening to next opening time
-            opening += timedelta(days=1)
-            opening = opening.replace(hour=6, minute=0, second=0, microsecond=0)
-            opening = random_date_between(opening + ONE_MINUTE, opening + THREE_MINUTES)
-
-            # Book classes on opening
-            book_class_on_opening(username, password, opening, booking_file, tolerance)
+        book_class_on_opening(username, password, opening, booking_file, tolerance)
