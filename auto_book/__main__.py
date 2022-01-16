@@ -24,12 +24,12 @@ if __name__ == "__main__":
     username, password = kwargs['username'], kwargs['password']
     assert utils.login(username, password), 'Invalid username or password.'
 
-    repeat_booking = kwargs['repeat']
+    repeat_booking = kwargs['repeat_daily']
     booking_file = kwargs['bookings']
     random_delay = kwargs['random_delay']
     tolerance = timedelta(minutes=kwargs['tolerance'])
 
-    # Opening times
+    # Opening time
     openings = accumulate(repeat(timedelta(days=1)), initial=datetime.now().replace(hour=6, minute=0, second=0))
     if random_delay:
         openings = map(lambda dt: utils.random_date_between(dt + utils.ONE_MINUTE, dt + utils.THREE_MINUTES), openings)
