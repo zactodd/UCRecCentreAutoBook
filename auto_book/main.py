@@ -38,10 +38,8 @@ HEADERS = {
 }
 
 # Default path to booking file
-if '\\' in __file__ or '/' in __file__:
-    CLASSES_TO_BOOK = f'{os.path.dirname(__file__)}\\classes_to_book.json'
-else:
-    CLASSES_TO_BOOK = 'classes_to_book.json'
+CLASSES_TO_BOOK = f'{os.path.dirname(__file__)}\\classes_to_book.json'
+
 
 # Script arguments
 parser = argparse.ArgumentParser()
