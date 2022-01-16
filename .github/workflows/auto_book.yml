@@ -32,7 +32,8 @@ jobs:
 
       # This step will execute the booking script in the virtual machine
       - name: Execute booking script
-        working-directory: ./auto_book
+        working-directory: ./UCRecCentreAutoBook
+
         env:
           # Set up username/password from GitHub secrets so they can be accessed.
           AB_USERNAME: ${{ secrets.USERNAME }}
