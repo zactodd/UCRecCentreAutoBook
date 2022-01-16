@@ -40,4 +40,4 @@ jobs:
           AB_PASSWORD: ${{ secrets.PASSWORD }}
         run: |
           # Run script to book new classes.
-          python ./auto_book AB_USERNAME AB_PASSWORD --random_delay
+          python ./auto_book AB_USERNAME AB_PASSWORD
