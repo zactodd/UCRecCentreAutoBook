@@ -181,8 +181,7 @@ if __name__ == "__main__":
     tolerance = timedelta(minutes=kwargs['tolerance'])
 
     # Opening times
-    booking_opening = (datetime.now() + OPENING_DELTA).replace(hour=6, minute=0, second=0)
-    openings = accumulate(repeat(timedelta(days=1)), initial=booking_opening)
+    openings = accumulate(repeat(timedelta(days=1)), initial=datetime.now().replace(hour=6, minute=0, second=0))
     if random_delay:
         openings = map(lambda dt: random_date_between(dt + ONE_MINUTE, dt + THREE_MINUTES), openings)
 
