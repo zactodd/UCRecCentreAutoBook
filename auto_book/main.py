@@ -15,13 +15,6 @@ FACILITY_QUERY = f'Search?eventTypes=Class&facilityId={FACILITY_ID}'
 BOOKING_QUERY = 'Book'
 LOGIN_QUERY = 'Login'
 
-# Datetime constants
-OPENING_DELTA = timedelta(days=5)
-ONE_MINUTE = timedelta(minutes=1)
-THREE_MINUTES = timedelta(minutes=3)
-TIME_FORMAT = '%H:%M:%S'
-DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
-
 # Request headers
 HEADERS = {
     'accept': '*/*',
@@ -37,9 +30,15 @@ HEADERS = {
     'x-mwapps-clientversion': '1.3.3-1096,enduserweb'
 }
 
+# Datetime constants
+OPENING_DELTA = timedelta(days=5)
+ONE_MINUTE = timedelta(minutes=1)
+THREE_MINUTES = timedelta(minutes=3)
+TIME_FORMAT = '%H:%M:%S'
+DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
+
 # Default path to booking file
 CLASSES_TO_BOOK = f'{os.path.dirname(__file__)}\\classes_to_book.json'
-
 
 # Script arguments
 parser = argparse.ArgumentParser()
@@ -104,7 +103,7 @@ def book(user_id, class_id, token, date):
 
 def login(username, password):
     """
-    Log in to the MyWellness website.
+    Login to the MyWellness website.
     :param username: User's username.
     :param password: User's password.
     :return: The user's id and authentication token for the session.
