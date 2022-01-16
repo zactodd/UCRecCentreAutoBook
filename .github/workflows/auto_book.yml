@@ -34,7 +34,7 @@ jobs:
       - name: Execute booking script
         working-directory: ./auto_book
         env:
-          # Set up username/password from GitHUb secrets so they can be accessed.
+          # Set up username/password from GitHub secrets so they can be accessed.
           AB_USERNAME: ${{ secrets.USERNAME }}
           AB_PASSWORD: ${{ secrets.PASSWORD }}
         run: |
