@@ -2,7 +2,7 @@ import argparse
 from datetime import datetime, timedelta
 from itertools import accumulate, repeat
 import sys
-from auto_book import utils
+import utils
 
 # Script arguments
 parser = argparse.ArgumentParser()
@@ -10,10 +10,12 @@ parser.add_argument('username', type=str, help='Gym username.')
 parser.add_argument('password', type=str, help='Gym password.')
 parser.add_argument('-f', '--bookings', type=str,
                     help='File path of class to book json.', default=utils.CLASSES_TO_BOOK)
-parser.add_argument('-t', '--tolerance', type=int, help='Tolerance between booking time and class time.', default=90)
-parser.add_argument('-r', '--repeat', type=bool, help='If to repeat the script.', default=False, const=True, nargs='?')
-parser.add_argument('-d', '--random_delay', type=bool,
-                    help='If to randomly delay the bookings.', default=False, const=True, nargs='?')
+parser.add_argument('-t', '--tolerance',
+                    type=int, help='Tolerance between booking time and class time.', default=90)
+parser.add_argument('-r', '--repeat_daily',
+                    type=bool, help='If to repeat the script daily.', default=False, const=True, nargs='?')
+parser.add_argument('-d', '--random_delay',
+                    type=bool, help='If to randomly delay the bookings.', default=False, const=True, nargs='?')
 
 
 if __name__ == "__main__":
