@@ -36,7 +36,7 @@ TIME_FORMAT = '%H:%M:%S'
 DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
 
 # Default path to booking file
-CLASSES_TO_BOOK = f'{os.path.dirname(__file__)}\\classes_to_book.json'
+CLASSES_TO_BOOK = os.path.join(os.path.dirname(__file__), 'classes_to_book.json')
 
 
 def classes_between_dates(date_from, date_to):
