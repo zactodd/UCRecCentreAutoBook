@@ -34,11 +34,9 @@ jobs:
       - name: Execute booking script
         working-directory: ./auto_book
         env:
-          # Set up username/password from GitHUb secrets so they can be accessed from the python script
-          # Use them like:  username = os.environ['USERNAME']
-          #                 password = os.environ['PASSWORD']
+          # Set up username/password from GitHUb secrets so they can be accessed.
           AB_USERNAME: ${{ secrets.USERNAME }}
           AB_PASSWORD: ${{ secrets.PASSWORD }}
         run: |
           # Run script to book new classes.
-          python .\auto_book\main.py AB_USERNAME AB_PASSWORD
+          python .\auto_book\main.py AB_USERNAME AB_PASSWORD --random_delay
