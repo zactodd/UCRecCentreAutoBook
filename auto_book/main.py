@@ -6,6 +6,7 @@ import random
 import os
 import sys
 import argparse
+from itertools import accumulate, repeat
 
 # Mywellness API
 URL = 'https://calendar.mywellness.com/v2/enduser/class/'
@@ -47,6 +48,8 @@ parser.add_argument('password', type=str, help='Gym password.')
 parser.add_argument('-f', '--bookings', type=str, help='File path of class to book json.', default=CLASSES_TO_BOOK)
 parser.add_argument('-t', '--tolerance', type=int, help='Tolerance between booking time and class time.', default=90)
 parser.add_argument('-r', '--repeat', type=bool, help='If to repeat the script.', default=False, const=True, nargs='?')
+parser.add_argument('-d', '--random_delay', type=bool,
+                    help='If to randomly delay the bookings.', default=False, const=True, nargs='?')
 
 
 def classes_between_dates(date_from, date_to):
@@ -82,6 +85,14 @@ def today_opening_classes():
     """
     opening = datetime.now() + OPENING_DELTA
     return classes_between_dates(opening, opening)
+
+
+def today_opening_datetime():
+    """
+    Get the opening datetime of today.
+    :return: The opening datetime of today.
+    """
+    return (datetime.now() + OPENING_DELTA).replace(hour=6, minute=0, second=0, microsecond=0)
 
 
 def book(user_id, class_id, token, date):
@@ -126,7 +137,7 @@ def book_classes_today(username, password, bookings, tol):
     :param tol: The tolerance of the booking times.
     """
     user_id, token = login(username, password)
-    date_str = f'{now + OPENING_DELTA:%Y%m%d}'
+    date_str = f'{datetime.now() + OPENING_DELTA:%Y%m%d}'
     for class_name, class_time, class_id in today_opening_classes():
         if any(class_name == book_name and abs(class_time - datetime.combine(class_time, book_time.time())) <= tol
                for book_name, book_time in bookings):
@@ -166,20 +177,18 @@ if __name__ == "__main__":
 
     repeat_booking = kwargs['repeat']
     booking_file = kwargs['bookings']
+    random_delay = kwargs['random_delay']
     tolerance = timedelta(minutes=kwargs['tolerance'])
 
-    # Random booking start after opening
-    now = datetime.now()
-    opening = now.replace(hour=6, minute=0, second=0, microsecond=0)
-    opening = random_date_between(opening + ONE_MINUTE, opening + THREE_MINUTES)
+    # Opening times
+    booking_opening = (datetime.now() + OPENING_DELTA).replace(hour=6, minute=0, second=0)
+    openings = accumulate(repeat(timedelta(days=1)), initial=booking_opening)
+    if random_delay:
+        openings = map(lambda dt: random_date_between(dt + ONE_MINUTE, dt + THREE_MINUTES), openings)
 
     # Book classes on opening
-    book_class_on_opening(username, password, opening, booking_file, tolerance)
+    book_class_on_opening(username, password, next(openings), booking_file, tolerance)
     
-    while repeat_booking:
-        # Push opening to next opening time
-        opening += timedelta(days=1)
-        opening = opening.replace(hour=6, minute=0, second=0, microsecond=0)
-        opening = random_date_between(opening + ONE_MINUTE, opening + THREE_MINUTES)
-
-        book_class_on_opening(username, password, opening, booking_file, tolerance)
+    if repeat_booking:
+        for opening in openings:
+            book_class_on_opening(username, password, opening, booking_file, tolerance)
