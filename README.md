@@ -1,7 +1,7 @@
 # Setup
 Download or clone repo then running the program in terminal with.
 ```bash
-python auto_book/main.py
+python auto_book USERNAME PASSWORD --repeat_daily
 ```
 Input your username (Email) and password for the reccentre when requested.
 
@@ -35,7 +35,7 @@ For example:
 
 # Script Automation
 ## Github Actions
-First fork the repoitory.
+First fork the repository.
 
 Then you will need to setup 'secrets' for your username and password.
 - Go to the repository settings
@@ -43,3 +43,7 @@ Then you will need to setup 'secrets' for your username and password.
 - Select 'add new repository secret'. 
 - Create a secret for your username titled 'USERNAME' and a secret for your password named 'PASSWORD'.
 
+The current action script will work the same as running the code below locally
+```bash
+python auto_book USERNAME PASSWORD --random_delay
+```
