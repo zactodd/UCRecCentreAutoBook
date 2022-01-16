@@ -32,11 +32,12 @@ jobs:
 
       # This step will execute the booking script in the virtual machine
       - name: Execute booking script
-        working-directory: ./auto_book
+        working-directory: .
+
         env:
           # Set up username/password from GitHub secrets so they can be accessed.
           AB_USERNAME: ${{ secrets.USERNAME }}
           AB_PASSWORD: ${{ secrets.PASSWORD }}
         run: |
           # Run script to book new classes.
-          python auto_book AB_USERNAME AB_PASSWORD --random_delay
+          python ./auto_book AB_USERNAME AB_PASSWORD --random_delay
