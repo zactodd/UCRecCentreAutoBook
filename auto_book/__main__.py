@@ -22,6 +22,7 @@ if __name__ == "__main__":
     kwargs = vars(parser.parse_args(sys.argv[1:]))
 
     username, password = kwargs['username'], kwargs['password']
+    print('Logging in as {}...'.format(username))
     assert utils.login(username, password), 'Invalid username or password.'
 
     repeat_booking = kwargs['repeat_daily']
