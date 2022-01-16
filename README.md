@@ -1,3 +1,4 @@
+[![Book Todays Classes](https://github.com/zactodd/UCRecCentreAutoBook/actions/workflows/auto_book.yml/badge.svg)](https://github.com/zactodd/UCRecCentreAutoBook/actions/workflows/auto_book.yml)
 # Setup
 Download or clone repo then running the program in terminal with.
 ```bash
