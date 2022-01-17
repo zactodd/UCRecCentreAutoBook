@@ -1,12 +1,4 @@
 [![Book Todays Classes](https://github.com/zactodd/UCRecCentreAutoBook/actions/workflows/auto_book.yml/badge.svg)](https://github.com/zactodd/UCRecCentreAutoBook/actions/workflows/auto_book.yml)
-# Setup
-Download or clone repo then running the program in terminal with.
-```bash
-python auto_book USERNAME PASSWORD --repeat_daily
-```
-Input your username (Email) and password for the reccentre when requested.
-
-
 # Edit Classes
 You can change classes by editing the json file auto_book/classes_to_book.json
 ```json
