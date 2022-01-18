@@ -164,9 +164,12 @@ def book_classes_today(username, password, bookings, tol):
     """
     user_id, token = login(username, password)
     date_str = f'{datetime.now() + _OPENING_DELTA:%Y%m%d}'
+    booked = []
     for class_name, class_time, class_id in today_opening_classes():
         if is_class_in_booking(class_name, class_time, bookings, tol):
             book(user_id, class_id, token, date_str)
+            booked.append((class_name, class_time))
+    return booked
 
 
 def book_class_on_opening(username, password, opening, bookings, tol):
@@ -190,9 +193,7 @@ def book_class_on_opening(username, password, opening, bookings, tol):
         now = datetime.now()
     # Book classes
     today_bookings = bookings[day]
-    book_classes_today(username, password, today_bookings, tol)
-
-    return today_bookings.keys()
+    return book_classes_today(username, password, today_bookings, tol)
 
 
 # def send_calendar_notification(booked_classes):
