@@ -1,6 +1,6 @@
 import argparse
 from datetime import datetime, timedelta
-from itertools import accumulate, repeat
+import json
 import sys
 import utils
 
@@ -14,6 +14,8 @@ parser.add_argument('-t', '--tolerance',
                     type=int, help='Tolerance between booking time and class time.', default=90)
 parser.add_argument('-d', '--random_delay',
                     type=bool, help='If to randomly delay the bookings.', default=False, const=True, nargs='?')
+# parser.add_argument('-c', '--calendar_notification',
+#                     type=bool, help='If to send notification on booking.', default=False, const=True, nargs='?')
 
 
 if __name__ == "__main__":
@@ -24,6 +26,7 @@ if __name__ == "__main__":
 
     booking_file = kwargs['bookings']
     random_delay = kwargs['random_delay']
+    # calendar_notification = kwargs['calendar_notification']
     tolerance = timedelta(minutes=kwargs['tolerance'])
 
     # Opening time
@@ -31,5 +34,13 @@ if __name__ == "__main__":
     if random_delay:
         opening = utils.random_date_between(opening + utils.ONE_MINUTE, opening + utils.THREE_MINUTES)
 
+    # Booking file
+    with open(booking_file, 'r') as f:
+        bookings = json.load(f)
+
     # Book classes on opening
-    utils.book_class_on_opening(username, password, opening, booking_file, tolerance)
+    booked_classes = utils.book_class_on_opening(username, password, opening, bookings, tolerance)
+
+    # Send notification for booked classes
+    # if calendar_notification and booked_classes is not None:
+    #     utils.send_calendar_notification(booked_classes)

@@ -131,18 +131,17 @@ def book_classes_today(username, password, bookings, tol):
             book(user_id, class_id, token, date_str)
 
 
-def book_class_on_opening(username, password, opening, booking_file, tol):
+def book_class_on_opening(username, password, opening, bookings, tol):
     """
     Book classes on opening.
     :param username: User's username.
     :param password: User's password.
     :param opening: The opening time.
-    :param booking_file: THe json file with the booking info.
+    :param bookings: Classes with booking times.
     :param tol: The time tolerance around booking.
+
+    :return: The classes booked.
     """
-    # Get classes to book
-    with open(booking_file) as f:
-        bookings = json.load(f)
     # Check if there are any bookings today
     day = calendar.day_name[(opening + OPENING_DELTA).weekday()].lower()
     if day not in bookings:
@@ -154,3 +153,9 @@ def book_class_on_opening(username, password, opening, booking_file, tol):
     # Book classes
     today_bookings = [(i['class'], datetime.strptime(i['time'], TIME_FORMAT)) for i in bookings[day]]
     book_classes_today(username, password, today_bookings, tol)
+
+    return today_bookings
+
+
+# def send_calendar_notification(booked_classes):
+#     pass
