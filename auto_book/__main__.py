@@ -40,8 +40,7 @@ if __name__ == "__main__":
 
     # Book classes on opening
     booked_classes = utils.book_class_on_opening(username, password, opening, bookings, tolerance)
-
-    print(booked_classes)
+    
     # Send notification for booked classes
     # if calendar_notification and booked_classes is not None:
     #     utils.send_calendar_notification(booked_classes)
