@@ -11,7 +11,7 @@ parser.add_argument('password', type=str, help='Gym password.')
 parser.add_argument('-f', '--bookings', type=str,
                     help='File path of class to book json.', default=utils.CLASSES_TO_BOOK)
 parser.add_argument('-t', '--tolerance',
-                    type=int, help='Tolerance between booking time and class time.', default=90)
+                    type=int, help='Tolerance between booking time and class time.', default=15)
 parser.add_argument('-d', '--random_delay',
                     type=bool, help='If to randomly delay the bookings.', default=False, const=True, nargs='?')
 # parser.add_argument('-c', '--calendar_notification',
