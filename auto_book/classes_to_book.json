@@ -1,31 +1,31 @@
 {
   "monday": [
-    {"class": "Zumba", "time": "17:00:00"},
-    {"class": "Pump", "time": "18:00:00"}
+    {"class": "Zumba", "time": "late afternoon"},
+    {"class": "Pump", "time": "late afternoon"}
   ],
   "tuesday": [
-    {"class": "Run Canterbury", "time": "17:00:00"},
-    {"class": "Zumba", "time": "17:00:00"}
+    {"class": "Run Canterbury", "time": "late afternoon"},
+    {"class": "Zumba", "time": "late afternoon"}
   ],
   "wednesday": [
-    {"class": "Zumba", "time": "12:00:00"},
-    {"class": "Supercircuit", "time": "17:00:00"},
-    {"class": "HIIT", "time": "17:00:00"}
+    {"class": "Zumba", "time": "late morning"},
+    {"class": "Supercircuit", "time": "late afternoon"},
+    {"class": "HIIT", "time": "late afternoon"}
   ],
   "thursday": [
-    {"class": "Zumba", "time": "17:00:00"},
-    {"class": "HIIT30", "time": "17:00:00"},
-    {"class": "Run Canterbury", "time": "17:00:00"}
+    {"class": "Zumba", "time": "late afternoon"},
+    {"class": "HIIT30", "time": "late afternoon"},
+    {"class": "Run Canterbury", "time": "late afternoon"}
   ],
   "friday": [
-    {"class": "HIIT30", "time": "16:00:00"},
-    {"class": "Pump", "time": "17:00:00"}
+    {"class": "HIIT30", "time": "late afternoon"},
+    {"class": "Pump", "time": "late afternoon"}
   ],
   "saturday": [
-    {"class": "Zumba", "time": "10:30:00"}
+    {"class": "Zumba", "time": "late morning"}
   ],
   "sunday": [
-    {"class": "Pump", "time": "09:30:00"},
-    {"class": "Zumba", "time": "10:30:00"}
+    {"class": "Pump", "time": "late morning"},
+    {"class": "Zumba", "time": "late morning"}
   ]
 }
