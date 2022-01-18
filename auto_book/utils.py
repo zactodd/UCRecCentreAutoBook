@@ -137,7 +137,8 @@ def is_class_in_booking(class_name, class_time, bookings, tol):
     :param tol: Time tolerance.
     :return: If the class is in the booking list.
     """
-    for book_name, book_time_str in bookings:
+    for info in bookings:
+        book_name, book_time_str = info['class'], info['time']
         if class_name != book_name:
             continue
         book_time_str = book_time_str.lower()
