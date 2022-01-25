@@ -1,35 +1,9 @@
-import calendar
-import requests
-from datetime import datetime, timedelta
-import json
+from datetime import timedelta
 import random
 import os
 
-# Mywellness API
-_MYWELLNESS_URL = 'https://calendar.mywellness.com/v2/enduser/class/'
-_SERVICE_URL = 'https://services.mywellness.com/Application/EC1D38D7-D359-48D0-A60C-D8C0B8FB9DF9/'
-_FACILITY_ID = 'dbf12cf8-3674-4daf-903b-2cead0b7ece1'
-_FACILITY_QUERY = f'Search?eventTypes=Class&facilityId={_FACILITY_ID}'
-_BOOKING_QUERY = 'Book'
-_LOGIN_QUERY = 'Login'
-
-# Request headers
-_HEADERS = {
-    'accept': '*/*',
-    'content-type': 'application/json',
-    'origin': 'https://widgets.mywellness.com',
-    'referer': 'https://widgets.mywellness.com/',
-    'sec-ch-ua-mobile': '?0',
-    'sec-fetch-dest': 'empty',
-    'sec-fetch-mode': 'cors',
-    'sec-fetch-site': 'same-site',
-    'x-mwapps-appid': 'EC1D38D7-D359-48D0-A60C-D8C0B8FB9DF9',
-    'x-mwapps-client': 'enduserweb',
-    'x-mwapps-clientversion': '1.3.3-1096,enduserweb'
-}
 
 # Datetime constants
-_OPENING_DELTA = timedelta(days=5)
 ONE_MINUTE = timedelta(minutes=1)
 THREE_MINUTES = timedelta(minutes=3)
 TIME_FORMAT = '%H:%M:%S'
@@ -37,32 +11,6 @@ DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
 
 # Default path to booking file
 CLASSES_TO_BOOK = os.path.join(os.path.dirname(__file__), 'classes_to_book.json')
-
-
-_NAMED_TIMES = {
-    'morning': ('05:30:00', '12:00:00'),
-    'afternoon': ('12:00:00', '18:30:00'),
-    'evening': ('18:30:00', '23:59:59'),
-    'early morning': ('5:30:00', '8:30:00'),
-    'late morning': ('8:30:00', '12:00:00'),
-    'early afternoon': ('12:00:00', '15:30:00'),
-    'late afternoon': ('15:30:00', '18:30:00'),
-    'early evening': ('18:30:00', '21:00:00'),
-    'late evening': ('21:00:00', '23:59:59'),
-}
-
-
-def classes_between_dates(date_from, date_to):
-    """
-    Get all class info between and including two dates.
-    :param date_from: The date to start from.
-    :param date_to: The date to end at.
-    :return: A list of tuples containing the (name, datetime, id) of the classes between and including the two dates.
-    """
-    url = f'{_MYWELLNESS_URL}{_FACILITY_QUERY}&fromDate={date_from:%Y-%m-%d}&toDate={date_to:%Y-%m-%d}'
-    response = requests.get(url)
-    cls_info = json.loads(response.text)
-    return [(i['name'], datetime.strptime(i['actualizedStartDateTime'], DATETIME_FORMAT), i['id']) for i in cls_info]
 
 
 def random_date_between(date_from, date_to):
@@ -76,126 +24,3 @@ def random_date_between(date_from, date_to):
     int_delta = (delta.days * 86400) + delta.seconds
     random_second = random.randint(0, int_delta)
     return date_from + timedelta(seconds=random_second)
-
-
-def today_opening_classes():
-    """
-    Get all classes that are open today.
-    :return: A list of tuples containing the (name, datetime, id) of the classes today.
-    """
-    opening = datetime.now() + _OPENING_DELTA
-    return classes_between_dates(opening, opening)
-
-
-def today_opening_datetime():
-    """
-    Get the opening datetime of today.
-    :return: The opening datetime of today.
-    """
-    return (datetime.now() + _OPENING_DELTA).replace(hour=6, minute=0, second=0, microsecond=0)
-
-
-def book(user_id, class_id, token, date):
-    """
-    Book a class.
-    :param user_id: The id of the user booking.
-    :param class_id: The id of the class to book.
-    :param date: A string representing the date to book the class.
-    :param token: The authentication token for the session.
-    """
-    headers = _HEADERS.copy()
-    headers['authorization'] = f'Bearer {token}'
-    requests.post(
-        headers=headers,
-        url=f'{_MYWELLNESS_URL}{_BOOKING_QUERY}',
-        json={'userId': user_id, 'classId': class_id, 'partitionDate': int(date)},
-    )
-
-
-def login(username, password):
-    """
-    Login to the MyWellness website.
-    :param username: User's username.
-    :param password: User's password.
-    :return: The user's id and authentication token for the session.
-    """
-    response = requests.post(
-        headers=_HEADERS,
-        url=f'{_SERVICE_URL}/{_LOGIN_QUERY}',
-        json={"username": username, "password": password, "keepMeLoggedIn": False},
-    )
-    login_info = json.loads(response.text)
-    return (login_info['data']['userContext']['id'], login_info['token']) if 'data' in login_info else None
-
-
-def is_class_in_booking(class_name, class_time, bookings, tol):
-    """
-    Check if a class is in the booking list.
-    :param class_name: Name of the class.
-    :param class_time: Datetime of the class.
-    :param bookings: List of bookings.
-    :param tol: Time tolerance.
-    :return: If the class is in the booking list.
-    """
-    for info in bookings:
-        book_name, book_time_str = info['class'], info['time']
-        if class_name != book_name:
-            continue
-        book_time_str = book_time_str.lower()
-        if book_time_str in _NAMED_TIMES:
-            min_time, max_time = _NAMED_TIMES[book_time_str]
-            min_time = datetime.combine(class_time, datetime.strptime(min_time, TIME_FORMAT).time())
-            max_time = datetime.combine(class_time, datetime.strptime(max_time, TIME_FORMAT).time())
-        else:
-            book_time = datetime.combine(class_time, datetime.strptime(book_time_str, TIME_FORMAT).time())
-            min_time = book_time - tol
-            max_time = book_time + tol
-        if min_time <= class_time <= max_time:
-            return True
-    return False
-
-
-def book_classes_today(username, password, bookings, tol):
-    """
-    Book classes for today.
-    :param username: User's username.
-    :param password: User's password.
-    :param bookings: The classes to book.
-    :param tol: The tolerance of the booking times.
-    """
-    user_id, token = login(username, password)
-    date_str = f'{datetime.now() + _OPENING_DELTA:%Y%m%d}'
-    booked = []
-    for class_name, class_time, class_id in today_opening_classes():
-        if is_class_in_booking(class_name, class_time, bookings, tol):
-            book(user_id, class_id, token, date_str)
-            booked.append((class_name, class_time))
-    return booked
-
-
-def book_class_on_opening(username, password, opening, bookings, tol):
-    """
-    Book classes on opening.
-    :param username: User's username.
-    :param password: User's password.
-    :param opening: The opening time.
-    :param bookings: Classes with booking times.
-    :param tol: The time tolerance around booking.
-
-    :return: The classes booked.
-    """
-    # Check if there are any bookings today
-    day = calendar.day_name[(opening + _OPENING_DELTA).weekday()].lower()
-    if day not in bookings:
-        return
-    # Block until opening time
-    now = datetime.now()
-    while now < opening:
-        now = datetime.now()
-    # Book classes
-    today_bookings = bookings[day]
-    return book_classes_today(username, password, today_bookings, tol)
-
-
-# def send_calendar_notification(booked_classes):
-#     pass
