@@ -55,8 +55,14 @@ def classes_between_dates(date_from, date_to):
     url = f'{_MYWELLNESS_URL}{_FACILITY_QUERY}&fromDate={date_from:%Y-%m-%d}&toDate={date_to:%Y-%m-%d}'
     response = requests.get(url)
     cls_info = json.loads(response.text)
-    return [(i['name'], datetime.strptime(i['actualizedStartDateTime'], utils.DATETIME_FORMAT), i['id'])
-            for i in cls_info]
+    return [(
+        i['name'],
+        datetime.strptime(i['actualizedStartDateTime'], utils.DATETIME_FORMAT),
+        i['id'],
+        i['room'],
+        i['startDate'],
+        i['endDate']
+    ) for i in cls_info]
 
 
 def today_opening_classes():
@@ -147,10 +153,11 @@ def book_classes_today(username, password, bookings, tol):
     user_id, token = login(username, password)
     date_str = f'{datetime.now() + _OPENING_DELTA:%Y%m%d}'
     booked = []
-    for class_name, class_time, class_id in today_opening_classes():
+    for class_info in today_opening_classes():
+        class_name, class_time, class_id, *_ = class_info
         if is_class_in_booking(class_name, class_time, bookings, tol):
             book(user_id, class_id, token, date_str)
-            booked.append((class_name, class_time))
+            booked.append(class_info)
     return booked
 
 
@@ -177,3 +184,10 @@ def book_class_on_opening(username, password, opening, bookings, tol):
     today_bookings = bookings[day]
     return book_classes_today(username, password, today_bookings, tol)
 
+
+def is_class_booked(class_info):
+    pass
+
+
+def checked_classes_booked(classes_info):
+    pass
