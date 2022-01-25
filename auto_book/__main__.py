@@ -4,6 +4,7 @@ import json
 import sys
 import utils
 import booking
+import calender_notification
 
 # Script arguments
 parser = argparse.ArgumentParser()
@@ -15,8 +16,8 @@ parser.add_argument('-t', '--tolerance',
                     type=int, help='Tolerance between booking time and class time.', default=15)
 parser.add_argument('-d', '--random_delay',
                     type=bool, help='If to randomly delay the bookings.', default=False, const=True, nargs='?')
-# parser.add_argument('-c', '--calendar_notification',
-#                     type=bool, help='If to send notification on booking.', default=False, const=True, nargs='?')
+parser.add_argument('-c', '--calendar_notification',
+                    type=bool, help='If to send notification on booking.', default=False, const=True, nargs='?')
 
 
 if __name__ == "__main__":
@@ -27,7 +28,7 @@ if __name__ == "__main__":
 
     booking_file = kwargs['bookings']
     random_delay = kwargs['random_delay']
-    # calendar_notification = kwargs['calendar_notification']
+    calendar_notification = kwargs['calendar_notification']
     tolerance = timedelta(minutes=kwargs['tolerance'])
 
     # Opening time
@@ -40,8 +41,8 @@ if __name__ == "__main__":
         bookings = json.load(f)
 
     # Book classes on opening
-    booked_classes = booking.book_class_on_opening(username, password, opening, bookings, tolerance)
+    booked_classes_info = booking.book_class_on_opening(username, password, opening, bookings, tolerance)
 
     # Send notification for booked classes
-    # if calendar_notification and booked_classes is not None:
-    #     calender.send_calendar_notification(booked_classes)
+    if calendar_notification and booked_classes_info is not None:
+        calender_notification.send_calendar_notification(booked_classes_info)
