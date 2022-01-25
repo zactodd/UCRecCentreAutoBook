@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import json
 import sys
 import utils
+import booking
 
 # Script arguments
 parser = argparse.ArgumentParser()
@@ -22,7 +23,7 @@ if __name__ == "__main__":
     kwargs = vars(parser.parse_args(sys.argv[1:]))
 
     username, password = kwargs['username'], kwargs['password']
-    assert utils.login(username, password), 'Invalid username or password.'
+    assert booking.login(username, password), 'Invalid username or password.'
 
     booking_file = kwargs['bookings']
     random_delay = kwargs['random_delay']
@@ -39,8 +40,8 @@ if __name__ == "__main__":
         bookings = json.load(f)
 
     # Book classes on opening
-    booked_classes = utils.book_class_on_opening(username, password, opening, bookings, tolerance)
-    
+    booked_classes = booking.book_class_on_opening(username, password, opening, bookings, tolerance)
+
     # Send notification for booked classes
     # if calendar_notification and booked_classes is not None:
-    #     utils.send_calendar_notification(booked_classes)
+    #     calender.send_calendar_notification(booked_classes)
