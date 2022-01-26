@@ -4,18 +4,17 @@ from datetime import datetime
 import re
 from booking import FACILITY_ID
 
-# Calender files
+# ICS file
 _GYM_ICS = os.path.join(os.path.dirname(__file__), '.gym_calendar.ics')
-_ICS_EVENT_BLOCK = r'BEGIN:VEVENT((.|\n)*?)END:VEVENT'
-_ICS_DSTART = r'DTSTART((;(.*):)|:)(.*?)\n'
 
+# Regex ics
+_ICS_EVENT_BLOCK = r'BEGIN:VEVENT((.|\n)*)END:VEVENT'
+_ICS_DSTART = r'DTSTART(?:((\;(.*)\:)|\:))(.*)\n'
 
-_CSV_HEADERS = ('ClassName', 'Start', 'End', 'Location', 'ClassID', 'Date')
-
-
+# Datetime format
 _EVENT_DATETIME_FORMAT = '%Y%m%dT%H%M%S'
 
-
+# ICS Timezone settings
 _TIME_ZONE_SETTINGS = """
 CALSCALE:GREGORIAN
 BEGIN:VTIMEZONE
@@ -74,7 +73,7 @@ def _ics_to_keep(ics):
     events = re.findall(_ICS_EVENT_BLOCK, ics)
     for e in events:
         e = e[0]
-        date_str = re.findall(_ICS_DSTART, e)[0][0]
+        date_str = re.search(_ICS_DSTART, e).groups()[0]
         if datetime.strptime(date_str, _EVENT_DATETIME_FORMAT) > expired:
             keep_events.append(f'BEGIN:VEVENT{e}END:VCALENDAR\n')
     return keep_events
