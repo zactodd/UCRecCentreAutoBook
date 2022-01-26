@@ -1,9 +1,17 @@
 import os
+import csv
 from datetime import datetime
 
+# Calender files
+_GYM_ICS = os.path.join(os.path.dirname(__file__), '.gym_calendar.ics')
+_GYM_CSV = os.path.join(os.path.dirname(__file__), '.classes.csv')
 
 
-_GYM_ICS = CLASSES_TO_BOOK = os.path.join(os.path.dirname(__file__), 'gym_calendar.ics')
+_CSV_HEADERS = ('ClassName', 'Start', 'End', 'Location', 'ClassID', 'Date')
+
+
+_EVENT_DATETIME_FORMAT = '%Y%m%dT%H%M%S'
+
 
 _TIME_ZONE_SETTINGS = """
 CALSCALE:GREGORIAN
@@ -36,33 +44,31 @@ def send_calendar_notification(classes_info):
 
 
 def _write_csv(classes_info):
-    pass
+    with open(_GYM_CSV, 'w') as f:
+        writer = csv.writer(f)
+        writer.writerow(_CSV_HEADERS)
+        for class_info in classes_info:
+            class_name, class_time, class_id, class_room, class_start, class_end = class_info
+            writer.writerow((class_name, class_start, class_end, class_room, class_id, class_time))
 
 
 def _write_ics(classes_info):
     with open(_GYM_ICS, 'w') as f:
-        f.write('BEGIN:VCALENDAR\n')
-        f.write(_TIME_ZONE_SETTINGS)
-        f.write('\n'.join(map(_ics_event, classes_info)))
-        f.write('\nEND:VCALENDAR')
+        f.write(f'BEGIN:VCALENDAR\n'
+                f'{_TIME_ZONE_SETTINGS}'
+                f'{"".join(map(_ics_event, classes_info))}'
+                f'END:VCALENDAR')
 
 
 def _ics_event(class_info):
-    """
-    Generates the ics event str for a given class info.
-    :param class_info:
-    :return:
-    """
     class_name, class_time, class_id, class_room, class_start, class_end = class_info
-    return f"""
-    BEGIN:VEVENT
-    DTSTAMP:{datetime.now():'%Y%m%dT%H%M%SZ'}
-    DTSTART;TZID=Pacific/Auckland:{class_start}
-    DTEND;TZID=Pacific/Auckland:{class_end}
-    SUMMARY:{class_name}
-    LOCATION:{class_room}
-    DESCRIPTION:https://ucrecsportapp/classes/{class_id}/{}
-    UID:{class_id}
-    END:VEVENT
-    """.strip()
+    return f'BEGIN:VEVENT\n' \
+           f'DTSTAMP:{datetime.now():_EVENT_DATETIME_FORMAT}\n' \
+           f'DTSTART;TZID=Pacific/Auckland:{class_start:_EVENT_DATETIME_FORMAT}' \
+           f'DTEND;TZID=Pacific/Auckland:{class_end:_EVENT_DATETIME_FORMAT}\n' \
+           f'SUMMARY:{class_name}\n' \
+           f'LOCATION:{class_room}\n' \
+           f'DESCRIPTION:https://ucrecsportapp/classes/{class_id}/{class_start:%Y%m%d}\n' \
+           f'UID:{class_id}\n' \
+           f'END:VEVENT\n'
     

@@ -60,8 +60,8 @@ def classes_between_dates(date_from, date_to):
         datetime.strptime(i['actualizedStartDateTime'], utils.DATETIME_FORMAT),
         i['id'],
         i['room'],
-        i['startDate'],
-        i['endDate']
+        datetime.strptime(i['startDate'], utils.DATETIME_FORMAT),
+        datetime.strptime(i['endDate'], utils.DATETIME_FORMAT)
     ) for i in cls_info]
 
 
