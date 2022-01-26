@@ -7,7 +7,7 @@ from booking import FACILITY_ID
 # Calender files
 _GYM_ICS = os.path.join(os.path.dirname(__file__), '.gym_calendar.ics')
 _ICS_EVENT_BLOCK = r'BEGIN:VEVENT((.|\n)*?)END:VEVENT'
-_ICS_DSTART = r'DTSTAMP:(.*)?\n'
+_ICS_DSTART = r'DTSTART((;(.*):)|:)(.*?)\n'
 
 
 _CSV_HEADERS = ('ClassName', 'Start', 'End', 'Location', 'ClassID', 'Date')
