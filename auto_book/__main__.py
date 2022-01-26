@@ -4,7 +4,7 @@ import json
 import sys
 import utils
 import booking
-import calender_notification
+import calendar_notification
 
 # Script arguments
 parser = argparse.ArgumentParser()
