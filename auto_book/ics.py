@@ -74,7 +74,7 @@ def _ics_to_keep(ics):
     events = re.findall(_ICS_EVENT_BLOCK, ics)
     for e in events:
         e = e[0]
-        date_str = re.findall(_ICS_DSTART, e)[0]
+        date_str = re.match(_ICS_DSTART, e)[0]
         if datetime.strptime(date_str, _EVENT_DATETIME_FORMAT) > expired:
             keep_events.append(f'BEGIN:VEVENT{e}END:VCALENDAR\n')
     return keep_events
