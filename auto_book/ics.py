@@ -63,7 +63,7 @@ def _ics_event(class_info):
            f'DTEND;TZID=Pacific/Auckland:{class_end:{_EVENT_DATETIME_FORMAT}}\n' \
            f'SUMMARY:{class_name}\n' \
            f'LOCATION:{class_room}\n' \
-           f'DESCRIPTION:https://ucrecsportapp/classes/{FACILITY_ID}/{class_start:%Y%m%d}\n' \
+           f'DESCRIPTION:https://ucrecsportapp/classes/{FACILITY_ID}/{class_id}/{class_start:%Y%m%d}\n' \
            f'UID:{class_id}\n' \
            f'END:VEVENT\n'
 
