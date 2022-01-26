@@ -41,3 +41,17 @@ jobs:
         run: |
           # Run script to book new classes.
           python ./auto_book $AB_USERNAME $AB_PASSWORD --random_delay
+
+      # These next two steps commit files changes to the repository.
+      # 'diff-index --quiet HEAD' is used in case there are no changes to the calendar files
+      - name: commit files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          git diff-index --quiet HEAD || git commit -m 'Update calendar' -a
+      - name: push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
