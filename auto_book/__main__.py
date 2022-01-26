@@ -4,7 +4,7 @@ import json
 import sys
 import utils
 import booking
-import calendar_notification
+import ics
 
 # Script arguments
 parser = argparse.ArgumentParser()
@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
     booking_file = kwargs['bookings']
     random_delay = kwargs['random_delay']
-    send_notification = kwargs['calendar_notification']
+    calendar_notification = kwargs['calendar_notification']
     tolerance = timedelta(minutes=kwargs['tolerance'])
 
     # Opening time
@@ -44,5 +44,5 @@ if __name__ == "__main__":
     booked_classes_info = booking.book_class_on_opening(username, password, opening, bookings, tolerance)
 
     # Send notification for booked classes
-    if send_notification and booked_classes_info is not None:
-        calendar_notification.send_calendar_notification(booked_classes_info)
+    if calendar_notification and booked_classes_info is not None:
+        ics.make_ics(booked_classes_info)

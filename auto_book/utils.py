@@ -6,6 +6,7 @@ import os
 # Datetime constants
 ONE_MINUTE = timedelta(minutes=1)
 THREE_MINUTES = timedelta(minutes=3)
+SEVEN_DAYS = timedelta(days=7)
 TIME_FORMAT = '%H:%M:%S'
 DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
 

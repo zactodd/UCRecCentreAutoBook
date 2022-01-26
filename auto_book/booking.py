@@ -8,8 +8,8 @@ import utils
 # Mywellness API
 _MYWELLNESS_URL = 'https://calendar.mywellness.com/v2/enduser/class/'
 _SERVICE_URL = 'https://services.mywellness.com/Application/EC1D38D7-D359-48D0-A60C-D8C0B8FB9DF9/'
-_FACILITY_ID = 'dbf12cf8-3674-4daf-903b-2cead0b7ece1'
-_FACILITY_QUERY = f'Search?eventTypes=Class&facilityId={_FACILITY_ID}'
+FACILITY_ID = 'dbf12cf8-3674-4daf-903b-2cead0b7ece1'
+_FACILITY_QUERY = f'Search?eventTypes=Class&facilityId={FACILITY_ID}'
 _BOOKING_QUERY = 'Book'
 _LOGIN_QUERY = 'Login'
 
