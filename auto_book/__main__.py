@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
     booking_file = kwargs['bookings']
     random_delay = kwargs['random_delay']
-    calendar_notification = kwargs['calendar_notification']
+    send_notification = kwargs['calendar_notification']
     tolerance = timedelta(minutes=kwargs['tolerance'])
 
     # Opening time
@@ -44,5 +44,5 @@ if __name__ == "__main__":
     booked_classes_info = booking.book_class_on_opening(username, password, opening, bookings, tolerance)
 
     # Send notification for booked classes
-    if calendar_notification and booked_classes_info is not None:
-        calender_notification.send_calendar_notification(booked_classes_info)
+    if send_notification and booked_classes_info is not None:
+        calendar_notification.send_calendar_notification(booked_classes_info)
