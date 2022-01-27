@@ -52,7 +52,7 @@ def make_ics(classes_info):
             if datetime.strptime(date_str, _EVENT_DATETIME_FORMAT) < expired:
                 f.write(f'BEGIN:VEVENT{e}END:VCALENDAR\n')
         # New classes to add to ics
-        for class_name, class_time, class_id, class_room, class_start, class_end in classes_info:
+        for class_id, class_name, class_time,  class_room, class_start, class_end in classes_info:
             f.write('BEGIN:VEVENT\n'
                     f'DTSTAMP:{datetime.now():{_EVENT_DATETIME_FORMAT}}\n'
                     f'DTSTART;TZID=Pacific/Auckland:{class_start:{_EVENT_DATETIME_FORMAT}}\n'

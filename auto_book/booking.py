@@ -56,9 +56,9 @@ def classes_between_dates(date_from, date_to):
     response = requests.get(url)
     cls_info = json.loads(response.text)
     return [(
+        i['id'],
         i['name'],
         datetime.strptime(i['actualizedStartDateTime'], utils.DATETIME_FORMAT),
-        i['id'],
         i['room'],
         datetime.strptime(i['startDate'], utils.DATETIME_FORMAT),
         datetime.strptime(i['endDate'], utils.DATETIME_FORMAT)
@@ -154,7 +154,7 @@ def book_classes_today(username, password, bookings, tol):
     date_str = f'{datetime.now() + _OPENING_DELTA:%Y%m%d}'
     booked = []
     for class_info in today_opening_classes():
-        class_name, class_time, class_id, *_ = class_info
+        class_id, class_name, class_time, *_ = class_info
         if is_class_in_booking(class_name, class_time, bookings, tol):
             book(user_id, class_id, token, date_str)
             booked.append(class_info)
