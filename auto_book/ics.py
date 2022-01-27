@@ -44,7 +44,7 @@ def make_ics(classes_info):
     with open(_GYM_ICS, 'w+') as f:
         f.write(f'BEGIN:VCALENDAR\n{_TIME_ZONE_SETTINGS}\n')
         # Classes to keep in ics
-        expired = datetime.now() - utils.SEVEN_DAYS
+        expired = datetime.now() - utils.FORTNIGHT
         events = re.findall(_ICS_EVENT_BLOCK, f.read())
         for e in events:
             e = e[0]
