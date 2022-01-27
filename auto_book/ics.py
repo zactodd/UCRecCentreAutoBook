@@ -41,39 +41,25 @@ END:VTIMEZONE
 
 
 def make_ics(classes_info):
-    keep_events = []
-    if os.path.exists(_GYM_ICS):
-        with open(_GYM_ICS, 'r') as f:
-            keep_events = _ics_to_keep(f.read())
-
-    with open(_GYM_ICS, 'w') as f:
+    with open(_GYM_ICS, 'w+') as f:
         f.write(f'BEGIN:VCALENDAR\n{_TIME_ZONE_SETTINGS}\n')
-        if keep_events:
-            f.write(''.join(keep_events))
-        f.write(''.join(map(_ics_event, classes_info)))
+        # Classes to keep in ics
+        expired = datetime.now() - utils.SEVEN_DAYS
+        events = re.findall(_ICS_EVENT_BLOCK, f.read())
+        for e in events:
+            e = e[0]
+            date_str = re.search(_ICS_DSTART, e).groups()[-1]
+            if datetime.strptime(date_str, _EVENT_DATETIME_FORMAT) > expired:
+                f.write(f'BEGIN:VEVENT{e}END:VCALENDAR\n')
+        # New classes to add to ics
+        for class_name, class_time, class_id, class_room, class_start, class_end in classes_info:
+            f.write('BEGIN:VEVENT\n'
+                    f'DTSTAMP:{datetime.now():{_EVENT_DATETIME_FORMAT}}\n'
+                    f'DTSTART;TZID=Pacific/Auckland:{class_start:{_EVENT_DATETIME_FORMAT}}\n'
+                    f'DTEND;TZID=Pacific/Auckland:{class_end:{_EVENT_DATETIME_FORMAT}}\n'
+                    f'SUMMARY:{class_name}\n'
+                    f'LOCATION:{class_room}\n'
+                    f'DESCRIPTION:https://ucrecsportapp/classes/{FACILITY_ID}/{class_id}/{class_start:%Y%m%d}\n'
+                    f'UID:{class_id}\n'
+                    'END:VEVENT\n')
         f.write('END:VCALENDAR')
-
-
-def _ics_event(class_info):
-    class_name, class_time, class_id, class_room, class_start, class_end = class_info
-    return f'BEGIN:VEVENT\n' \
-           f'DTSTAMP:{datetime.now():{_EVENT_DATETIME_FORMAT}}\n' \
-           f'DTSTART;TZID=Pacific/Auckland:{class_start:{_EVENT_DATETIME_FORMAT}}\n' \
-           f'DTEND;TZID=Pacific/Auckland:{class_end:{_EVENT_DATETIME_FORMAT}}\n' \
-           f'SUMMARY:{class_name}\n' \
-           f'LOCATION:{class_room}\n' \
-           f'DESCRIPTION:https://ucrecsportapp/classes/{FACILITY_ID}/{class_id}/{class_start:%Y%m%d}\n' \
-           f'UID:{class_id}\n' \
-           f'END:VEVENT\n'
-
-
-def _ics_to_keep(ics):
-    expired = datetime.now() - utils.SEVEN_DAYS
-    keep_events = []
-    events = re.findall(_ICS_EVENT_BLOCK, ics)
-    for e in events:
-        e = e[0]
-        date_str = re.search(_ICS_DSTART, e).groups()[-1]
-        if datetime.strptime(date_str, _EVENT_DATETIME_FORMAT) > expired:
-            keep_events.append(f'BEGIN:VEVENT{e}END:VCALENDAR\n')
-    return keep_events
