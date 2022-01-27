@@ -185,6 +185,34 @@ def book_class_on_opening(username, password, opening, bookings, tol):
     return book_classes_today(username, password, today_bookings, tol)
 
 
+def special_classes(look_back_interval=utils.FORTNIGHT):
+    """
+    Get the special classes.
+    :param look_back_interval: The time to uses to determine which classes are special.
+    :return: A List of special classes.
+    """
+    yesterday = datetime.now() - timedelta(days=1)
+    classes = classes_between_dates(yesterday - look_back_interval, yesterday)
+    classes = {name for name, *_ in classes}
+    today_classes = today_opening_classes()
+    return [c for c in today_classes if c[0] in classes]
+
+
+def book_special_classes(username, password):
+    """
+    Book special classes.
+    :param username: User's username.
+    :param password: User's password.
+    :return: The classes booked.
+    """
+    classes = special_classes()
+    user_id, token = login(username, password)
+    date_str = f'{datetime.now() + _OPENING_DELTA:%Y%m%d}'
+    for class_id, *_ in classes:
+        book(user_id, class_id, token, date_str)
+    return classes
+
+    
 def is_class_booked(class_info):
     pass
 
