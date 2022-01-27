@@ -212,7 +212,7 @@ def book_special_classes(username, password):
         book(user_id, class_id, token, date_str)
     return classes
 
-    
+
 def is_class_booked(class_info):
     pass
 
