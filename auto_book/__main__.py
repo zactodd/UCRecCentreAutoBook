@@ -13,11 +13,13 @@ parser.add_argument('password', type=str, help='Gym password.')
 parser.add_argument('-f', '--bookings', type=str,
                     help='File path of class to book json.', default=utils.CLASSES_TO_BOOK)
 parser.add_argument('-t', '--tolerance',
-                    type=int, help='Tolerance between booking time and class time.', default=15)
+                    type=int, help='Tolerance between booking time and class time.', default=60)
 parser.add_argument('-d', '--random_delay',
                     type=bool, help='If to randomly delay the bookings.', default=False, const=True, nargs='?')
 parser.add_argument('-c', '--calendar_notification',
                     type=bool, help='If to send notification on booking.', default=False, const=True, nargs='?')
+parser.add_argument('-s', '--special_classes',
+                    type=bool, help='If to book special classes.', default=False, const=True, nargs='?')
 
 
 if __name__ == "__main__":
@@ -29,6 +31,7 @@ if __name__ == "__main__":
     booking_file = kwargs['bookings']
     random_delay = kwargs['random_delay']
     calendar_notification = kwargs['calendar_notification']
+    special_classes = kwargs['special_classes']
     tolerance = timedelta(minutes=kwargs['tolerance'])
 
     # Opening time
@@ -42,6 +45,10 @@ if __name__ == "__main__":
 
     # Book classes on opening
     booked_classes_info = booking.book_class_on_opening(username, password, opening, bookings, tolerance)
+
+    # Book special classes
+    if special_classes:
+        booked_classes_info.extend(booking.book_special_classes(username, password))
 
     # Send notification for booked classes
     if calendar_notification and booked_classes_info is not None:
