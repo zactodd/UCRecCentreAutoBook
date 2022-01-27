@@ -49,7 +49,7 @@ def make_ics(classes_info):
         for e in events:
             e = e[0]
             date_str = re.search(_ICS_DSTART, e).groups()[-1]
-            if datetime.strptime(date_str, _EVENT_DATETIME_FORMAT) > expired:
+            if datetime.strptime(date_str, _EVENT_DATETIME_FORMAT) < expired:
                 f.write(f'BEGIN:VEVENT{e}END:VCALENDAR\n')
         # New classes to add to ics
         for class_name, class_time, class_id, class_room, class_start, class_end in classes_info:
