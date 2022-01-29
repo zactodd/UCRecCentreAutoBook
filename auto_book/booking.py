@@ -48,9 +48,9 @@ _OPENING_DELTA = timedelta(days=5)
 
 @attr.s
 class ClassInfo:
-    id: str
-    name: str
-    room: str
+    id: str = attr.ib()
+    name: str = attr.ib()
+    room: str = attr.ib()
     is_booked: bool = attr.ib(converter=bool)
     date: datetime = attr.ib(converter=utils.to_datetime)
     start: datetime = attr.ib(converter=utils.to_datetime)
