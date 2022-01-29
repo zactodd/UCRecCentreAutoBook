@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 import random
 import os
 
@@ -25,3 +25,12 @@ def random_date_between(date_from, date_to):
     int_delta = (delta.days * 86400) + delta.seconds
     random_second = random.randint(0, int_delta)
     return date_from + timedelta(seconds=random_second)
+
+
+def to_datetime(s):
+    """
+    Convert a string to a datetime.
+    :param s: The string to convert.
+    :return: A datetime object.
+    """
+    return datetime.strptime(s, DATETIME_FORMAT)
