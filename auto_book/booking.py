@@ -195,7 +195,7 @@ def special_classes(look_back_interval=utils.FORTNIGHT):
     classes = classes_between_dates(yesterday - look_back_interval, yesterday)
     classes = {name for _, name, *_ in classes}
     today_classes = today_opening_classes()
-    return [class_id for class_id, class_name, *_ in today_classes if class_name not in classes]
+    return [c for c in today_classes if c[1] not in classes]
 
 
 def book_special_classes(username, password):
