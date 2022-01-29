@@ -1,6 +1,5 @@
 import os
 from datetime import datetime
-import utils
 import booking
 
 # ICS file
@@ -39,12 +38,13 @@ END:VTIMEZONE
 """.strip()
 
 
-def make_ics():
+def write_ics(username, password):
     """
     Make ICS file from classes booked.
     """
+    _, token = booking.login(username, password)
     today = datetime.today()
-    classes = booking.classes_between_dates(today - utils.FORTNIGHT, today + utils.FORTNIGHT)
+    classes = booking.classes_between_dates(today - booking.OPENING_DELTA, today + booking.OPENING_DELTA, token)
     with open(_GYM_ICS, 'w') as f:
         f.write(f'BEGIN:VCALENDAR\n{_TIME_ZONE_SETTINGS}\n')
         for c in classes:
