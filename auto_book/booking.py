@@ -158,11 +158,10 @@ def book_classes_today(username, password, bookings, tol):
     :param tol: The tolerance of the booking times.
     """
     user_id, token = login(username, password)
-    date_str = f'{datetime.now() + _OPENING_DELTA:%Y%m%d}'
     booked = []
     for c in today_opening_classes():
         if is_class_in_booking(c.name, c.date, bookings, tol):
-            book(user_id, c.id, token, date_str)
+            book(user_id, c.id, token, c.date)
             booked.append(c)
     return booked
 
