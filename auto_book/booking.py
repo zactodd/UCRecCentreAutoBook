@@ -51,6 +51,7 @@ class ClassInfo:
     id: str
     name: str
     room: str
+    is_booked: bool = attr.ib(converter=bool)
     date: datetime = attr.ib(converter=utils.to_datetime)
     start: datetime = attr.ib(converter=utils.to_datetime)
     end: datetime = attr.ib(converter=utils.to_datetime)
@@ -65,9 +66,10 @@ def classes_between_dates(date_from, date_to):
     """
     url = f'{_MYWELLNESS_URL}{_FACILITY_QUERY}&fromDate={date_from:%Y-%m-%d}&toDate={date_to:%Y-%m-%d}'
     response = requests.get(url)
-    cls_info = json.loads(response.text)
-    return [ClassInfo(i['id'], i['name'], i['room'], i['actualizedStartDateTime'], i['startDate'], i['endDate'])
-            for i in cls_info]
+    clases_json = json.loads(response.text)
+    return [ClassInfo(c['id'], c['name'], c['room'], c['isParticipant'],
+                      c['actualizedStartDateTime'], c['startDate'], c['endDate'])
+            for c in clases_json]
 
 
 def today_opening_classes():
