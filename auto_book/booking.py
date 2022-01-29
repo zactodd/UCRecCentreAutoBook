@@ -43,7 +43,7 @@ _NAMED_TIMES = {
 }
 
 # Datetime constants
-_OPENING_DELTA = timedelta(days=5)
+OPENING_DELTA = timedelta(days=5)
 
 
 @attr.s
@@ -57,15 +57,21 @@ class ClassInfo:
     end: datetime = attr.ib(converter=utils.to_datetime)
 
 
-def classes_between_dates(date_from, date_to):
+def classes_between_dates(date_from, date_to, token=None):
     """
     Get all class info between and including two dates.
     :param date_from: The date to start from.
     :param date_to: The date to end at.
+    :param token: The authentication token for the session.
     :return: A list of tuples containing the (name, datetime, id) of the classes between and including the two dates.
     """
     url = f'{_MYWELLNESS_URL}{_FACILITY_QUERY}&fromDate={date_from:%Y-%m-%d}&toDate={date_to:%Y-%m-%d}'
-    response = requests.get(url)
+    if token:
+        headers = _HEADERS.copy()
+        headers['authorization'] = f'Bearer {token}'
+        response = requests.get(headers=headers, url=url)
+    else:
+        response = requests.get(url=url)
     classes_json = json.loads(response.text)
     return [ClassInfo(c['id'], c['name'], c['room'], c['isParticipant'],
                       c['actualizedStartDateTime'], c['startDate'], c['endDate'])
@@ -77,7 +83,7 @@ def today_opening_classes():
     Get all classes that are open today.
     :return: A list of tuples containing the (name, datetime, id) of the classes today.
     """
-    opening = datetime.now() + _OPENING_DELTA
+    opening = datetime.now() + OPENING_DELTA
     return classes_between_dates(opening, opening)
 
 
@@ -86,7 +92,7 @@ def today_opening_datetime():
     Get the opening datetime of today.
     :return: The opening datetime of today.
     """
-    return (datetime.now() + _OPENING_DELTA).replace(hour=6, minute=0, second=0, microsecond=0)
+    return (datetime.now() + OPENING_DELTA).replace(hour=6, minute=0, second=0, microsecond=0)
 
 
 def book(user_id, class_id, token, date):
@@ -178,7 +184,7 @@ def book_class_on_opening(username, password, opening, bookings, tol):
     :return: The classes booked.
     """
     # Check if there are any bookings today
-    day = calendar.day_name[(opening + _OPENING_DELTA).weekday()].lower()
+    day = calendar.day_name[(opening + OPENING_DELTA).weekday()].lower()
     if day not in bookings:
         return
     # Block until opening time
