@@ -40,8 +40,8 @@ END:VTIMEZONE
 """.strip()
 
 
-def make_ics(classes_info):
-    with open(_GYM_ICS, 'w+') as f:
+def make_ics(classes):
+    with open(_GYM_ICS, 'w') as f:
         f.write(f'BEGIN:VCALENDAR\n{_TIME_ZONE_SETTINGS}\n')
         # Classes to keep in ics
         expired = datetime.now() - utils.FORTNIGHT
@@ -52,14 +52,14 @@ def make_ics(classes_info):
             if datetime.strptime(date_str, _EVENT_DATETIME_FORMAT) < expired:
                 f.write(f'BEGIN:VEVENT{e}END:VCALENDAR\n')
         # New classes to add to ics
-        for class_id, class_name, class_time,  class_room, class_start, class_end in classes_info:
+        for c in classes:
             f.write('BEGIN:VEVENT\n'
                     f'DTSTAMP:{datetime.now():{_EVENT_DATETIME_FORMAT}}\n'
-                    f'DTSTART;TZID=Pacific/Auckland:{class_start:{_EVENT_DATETIME_FORMAT}}\n'
-                    f'DTEND;TZID=Pacific/Auckland:{class_end:{_EVENT_DATETIME_FORMAT}}\n'
-                    f'SUMMARY:{class_name}\n'
-                    f'LOCATION:{class_room}\n'
-                    f'DESCRIPTION:https://ucrecsportapp/classes/{FACILITY_ID}/{class_id}/{class_start:%Y%m%d}\n'
-                    f'UID:{class_id}\n'
+                    f'DTSTART;TZID=Pacific/Auckland:{c.start:{_EVENT_DATETIME_FORMAT}}\n'
+                    f'DTEND;TZID=Pacific/Auckland:{c.end:{_EVENT_DATETIME_FORMAT}}\n'
+                    f'SUMMARY:{c.name}\n'
+                    f'LOCATION:{c.room}\n'
+                    f'DESCRIPTION:https://ucrecsportapp/classes/{FACILITY_ID}/{c.id}/{c.start:%Y%m%d}\n'
+                    f'UID:{c.id}\n'
                     'END:VEVENT\n')
         f.write('END:VCALENDAR')
