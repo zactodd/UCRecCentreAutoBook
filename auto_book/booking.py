@@ -3,12 +3,14 @@ import json
 import calendar
 import requests
 import utils
+import attr
 
+# UC RecCentre ID
+FACILITY_ID = 'dbf12cf8-3674-4daf-903b-2cead0b7ece1'
 
 # Mywellness API
 _MYWELLNESS_URL = 'https://calendar.mywellness.com/v2/enduser/class/'
 _SERVICE_URL = 'https://services.mywellness.com/Application/EC1D38D7-D359-48D0-A60C-D8C0B8FB9DF9/'
-FACILITY_ID = 'dbf12cf8-3674-4daf-903b-2cead0b7ece1'
 _FACILITY_QUERY = f'Search?eventTypes=Class&facilityId={FACILITY_ID}'
 _BOOKING_QUERY = 'Book'
 _LOGIN_QUERY = 'Login'
@@ -28,7 +30,6 @@ _HEADERS = {
     'x-mwapps-clientversion': '1.3.3-1096,enduserweb'
 }
 
-
 _NAMED_TIMES = {
     'morning': ('05:30:00', '12:00:00'),
     'afternoon': ('12:00:00', '18:30:00'),
@@ -45,6 +46,16 @@ _NAMED_TIMES = {
 _OPENING_DELTA = timedelta(days=5)
 
 
+@attr.s
+class ClassInfo:
+    id: str
+    name: str
+    room: str
+    date: datetime = attr.ib(converter=utils.to_datetime)
+    start: datetime = attr.ib(converter=utils.to_datetime)
+    end: datetime = attr.ib(converter=utils.to_datetime)
+
+
 def classes_between_dates(date_from, date_to):
     """
     Get all class info between and including two dates.
@@ -55,14 +66,8 @@ def classes_between_dates(date_from, date_to):
     url = f'{_MYWELLNESS_URL}{_FACILITY_QUERY}&fromDate={date_from:%Y-%m-%d}&toDate={date_to:%Y-%m-%d}'
     response = requests.get(url)
     cls_info = json.loads(response.text)
-    return [(
-        i['id'],
-        i['name'],
-        datetime.strptime(i['actualizedStartDateTime'], utils.DATETIME_FORMAT),
-        i['room'],
-        datetime.strptime(i['startDate'], utils.DATETIME_FORMAT),
-        datetime.strptime(i['endDate'], utils.DATETIME_FORMAT)
-    ) for i in cls_info]
+    return [ClassInfo(i['id'], i['name'], i['room'], i['actualizedStartDateTime'], i['startDate'], i['endDate'])
+            for i in cls_info]
 
 
 def today_opening_classes():
@@ -87,7 +92,7 @@ def book(user_id, class_id, token, date):
     Book a class.
     :param user_id: The id of the user booking.
     :param class_id: The id of the class to book.
-    :param date: A string representing the date to book the class.
+    :param date: A datetime of class to book.
     :param token: The authentication token for the session.
     """
     headers = _HEADERS.copy()
@@ -95,7 +100,7 @@ def book(user_id, class_id, token, date):
     requests.post(
         headers=headers,
         url=f'{_MYWELLNESS_URL}{_BOOKING_QUERY}',
-        json={'userId': user_id, 'classId': class_id, 'partitionDate': int(date)},
+        json={'userId': user_id, 'classId': class_id, 'partitionDate': int(f'{date:%Y%m%d}')},
     )
 
 
@@ -153,11 +158,10 @@ def book_classes_today(username, password, bookings, tol):
     user_id, token = login(username, password)
     date_str = f'{datetime.now() + _OPENING_DELTA:%Y%m%d}'
     booked = []
-    for class_info in today_opening_classes():
-        class_id, class_name, class_time, *_ = class_info
-        if is_class_in_booking(class_name, class_time, bookings, tol):
-            book(user_id, class_id, token, date_str)
-            booked.append(class_info)
+    for c in today_opening_classes():
+        if is_class_in_booking(c.name, c.date, bookings, tol):
+            book(user_id, c.id, token, date_str)
+            booked.append(c)
     return booked
 
 
@@ -193,9 +197,9 @@ def special_classes(look_back_interval=utils.FORTNIGHT):
     """
     yesterday = datetime.now() - timedelta(days=1)
     classes = classes_between_dates(yesterday - look_back_interval, yesterday)
-    classes = {name for _, name, *_ in classes}
+    classes = {c.name for c in classes}
     today_classes = today_opening_classes()
-    return [c for c in today_classes if c[1] not in classes]
+    return [c for c in today_classes if c.name not in classes]
 
 
 def book_special_classes(username, password):
@@ -207,15 +211,6 @@ def book_special_classes(username, password):
     """
     classes = special_classes()
     user_id, token = login(username, password)
-    date_str = f'{datetime.now() + _OPENING_DELTA:%Y%m%d}'
-    for class_id, *_ in classes:
-        book(user_id, class_id, token, date_str)
+    for c in classes:
+        book(user_id, c.id, token, c.date)
     return classes
-
-
-def is_class_booked(class_info):
-    pass
-
-
-def checked_classes_booked(classes_info):
-    pass
