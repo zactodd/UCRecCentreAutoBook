@@ -1,5 +1,7 @@
+# AutoBook
+
 [![Book Todays Classes](https://github.com/zactodd/UCRecCentreAutoBook/actions/workflows/auto_book.yml/badge.svg)](https://github.com/zactodd/UCRecCentreAutoBook/actions/workflows/auto_book.yml)
-# Edit Classes
+## Edit Classes
 You can change classes by editing the json file auto_book/classes_to_book.json
 ```json
 {
@@ -22,6 +24,38 @@ For example:
       {"class": "FIT50", "time": "12:05:00"},
       {"class": "Run Canterbury", "time": "17:10:00"},
       {"class": "Zumba", "time": "17:10:00"}
+    ]
+}
+ ```
+
+Class can also be booked by replacing the time with a time named time such as 'morning'.
+Below is are the named times with there upper an lower bounds.
+```
+{
+    'morning': ('05:30:00', '12:00:00'),
+    'afternoon': ('12:00:00', '18:30:00'),
+    'evening': ('18:30:00', '23:59:59'),
+    'early morning': ('5:30:00', '8:30:00'),
+    'late morning': ('8:30:00', '12:00:00'),
+    'midday': ('11:00:00', '13:00:00'),
+    'early afternoon': ('12:00:00', '15:30:00'),
+    'late afternoon': ('15:30:00', '18:30:00'),
+    'early evening': ('18:30:00', '21:00:00'),
+    'late evening': ('21:00:00', '23:59:59')
+}
+```
+
+Updating our previous class file with named times would result in the following:
+```json
+{
+  "monday": [
+      {"class": "Zumba", "time": "late afternoon"},
+      {"class": "Pump", "time": "late afternoon"}
+    ],
+  "tuesday": [
+      {"class": "FIT50", "time": "midday"},
+      {"class": "Run Canterbury", "time": "late afternoon"},
+      {"class": "Zumba", "time": "late afternoon"}
     ]
 }
  ```
