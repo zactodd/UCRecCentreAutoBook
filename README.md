@@ -38,5 +38,17 @@ Then you will need to setup 'secrets' for your username and password.
 
 The current action script will work the same as running the code below locally
 ```bash
-python auto_book USERNAME PASSWORD --random_delay
+python auto_book USERNAME PASSWORD
+```
+
+## Calendar
+The script generates an up-to-date iCalendar file which includes all classes booked by the UCRecCentreAutoBook script. You can subscribe to this feed (in Google Calendar or other) by using the url:
+
+```
+https://raw.githubusercontent.com/<github-username>/UCRecCentreAutoBook/main/auto_book/.gym_calendar.ics
+```
+
+It is enabled by using the 'calendar_notification' paramter when running the script. For example:
+```bash
+python auto_book USERNAME PASSWORD --calendar_notification 
 ```
