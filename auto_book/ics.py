@@ -5,10 +5,6 @@ import booking
 # ICS file
 _GYM_ICS = os.path.join(os.path.dirname(__file__), '.gym_calendar.ics')
 
-# Regex ics
-_ICS_EVENT_BLOCK = r'BEGIN:VEVENT((.|\n)*)END:VEVENT'
-_ICS_DSTART = r'DTSTART((\;(.*)\:)|\:)(.*)\n'
-
 # Datetime format
 _EVENT_DATETIME_FORMAT = '%Y%m%dT%H%M%S'
 
@@ -48,7 +44,6 @@ def write_ics(username, password, date_from, date_to):
     :return:
     """
     _, token = booking.login(username, password)
-
     classes = booking.classes_between_dates(date_from, date_to, token)
     with open(_GYM_ICS, 'w') as f:
         f.write(f'BEGIN:VCALENDAR\n{_TIME_ZONE_SETTINGS}\n')
