@@ -38,13 +38,18 @@ END:VTIMEZONE
 """.strip()
 
 
-def write_ics(username, password):
+def write_ics(username, password, date_from, date_to):
     """
-    Make ICS file from classes booked.
+    Write ICS file for classes between dates.
+    :param username: The user's username.
+    :param password: The user's password.
+    :param date_from: The datetime to start from.
+    :param date_to: The datetime to end at.
+    :return:
     """
     _, token = booking.login(username, password)
-    today = datetime.today()
-    classes = booking.classes_between_dates(today - booking.OPENING_DELTA, today + booking.OPENING_DELTA, token)
+
+    classes = booking.classes_between_dates(date_from, date_to, token)
     with open(_GYM_ICS, 'w') as f:
         f.write(f'BEGIN:VCALENDAR\n{_TIME_ZONE_SETTINGS}\n')
         for c in classes:
@@ -59,4 +64,14 @@ def write_ics(username, password):
                         f'UID:{c.id}\n'
                         'END:VEVENT\n')
         f.write('END:VCALENDAR')
+
+
+def todays_ics(username, password):
+    """
+    Write ICS file for today classes
+    :param username: The user's username.
+    :param password: The user's password.
+    """
+    today = datetime.now()
+    write_ics(username, password, today - booking.OPENING_DELTA, today + booking.OPENING_DELTA)
 
