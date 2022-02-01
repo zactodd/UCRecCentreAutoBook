@@ -52,4 +52,4 @@ if __name__ == "__main__":
 
     # Send notification for booked classes
     if calendar_notification and booked_classes_info is not None:
-        ics.write_ics(username, password)
+        ics.todays_ics(username, password)
