@@ -89,14 +89,6 @@ def today_opening_classes():
     return classes_between_dates(opening, opening)
 
 
-def today_opening_datetime():
-    """
-    Get the opening datetime of today.
-    :return: ClassInfo of the classes opening today.
-    """
-    return (datetime.now() + OPENING_DELTA).replace(hour=6, minute=0, second=0, microsecond=0)
-
-
 def upcoming_open_classes():
     """
     Get all classes that are open from today until the end of the week.
