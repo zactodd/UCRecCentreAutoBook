@@ -2,8 +2,8 @@ name: Book new classes
 
 on:
   schedule:
+    - cron: '59 04 * * *' # runs at 04:59 UTC everyday which is 17:59 in NZDT
     - cron: '59 16 * * *' # runs at 16:59 UTC everyday which is 05:59 in NZDT
-
   workflow_dispatch:
 
 jobs:
