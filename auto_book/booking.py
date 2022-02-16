@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from collections import defaultdict
 import json
 import calendar
 import requests
@@ -64,7 +65,7 @@ def classes_between_dates(date_from, date_to, token=None):
     :param date_from: The date to start from.
     :param date_to: The date to end at.
     :param token: The authentication token for the session.
-    :return: A list of tuples containing the (name, datetime, id) of the classes between and including the two dates.
+    :return: ClassInfo of the classes between and including the two dates.
     """
     url = f'{_MYWELLNESS_URL}{_FACILITY_QUERY}&fromDate={date_from:%Y-%m-%d}&toDate={date_to:%Y-%m-%d}'
     if token:
@@ -91,9 +92,18 @@ def today_opening_classes():
 def today_opening_datetime():
     """
     Get the opening datetime of today.
-    :return: The opening datetime of today.
+    :return: ClassInfo of the classes opening today.
     """
     return (datetime.now() + OPENING_DELTA).replace(hour=6, minute=0, second=0, microsecond=0)
+
+
+def upcoming_open_classes():
+    """
+    Get all classes that are open from today until the end of the week.
+    :return: ClassInfo of the classes opening this week.
+    """
+    now = datetime.now()
+    return classes_between_dates(datetime.now(), now + OPENING_DELTA)
 
 
 def book(user_id, class_id, token, date):
@@ -195,6 +205,33 @@ def book_class_on_opening(username, password, opening, bookings, tol):
     # Book classes
     today_bookings = bookings[day]
     return book_classes_today(username, password, today_bookings, tol)
+
+
+def book_upcoming_classes_on_opening(username, password, bookings, tol):
+    """
+    Book classes on that are open.
+    :param username: User's username.
+    :param password: User's password.
+    :param bookings: Classes with booking times.
+    :param tol: The time tolerance around booking.
+    :return: The classes booked.
+    """
+    classes_day = defaultdict(list)
+    for c in upcoming_open_classes():
+        if not c.is_booked:
+            classes_day[calendar.day_name[c.date.weekday()].lower()].append(c)
+
+    user_id, token = login(username, password)
+    booked = []
+    for day, day_classes in classes_day.items():
+        bookings = bookings[day]
+        for c in day_classes:
+            if is_class_in_booking(c.name, c.date, bookings, tol):
+                book(user_id, c.id, token, c.date)
+                booked.append(c)
+    return booked
+
+
 
 
 def special_classes(look_back_interval=utils.FORTNIGHT):
