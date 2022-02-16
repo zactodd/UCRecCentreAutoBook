@@ -166,24 +166,35 @@ def is_class_in_booking(class_name, class_time, bookings, tol):
     return False
 
 
-def book_classes_today(username, password, bookings, tol):
+def book_classes(username, password, classes, bookings, tol):
     """
-    Book classes for today.
-    :param username: User's username.
-    :param password: User's password.
-    :param bookings: The classes to book.
-    :param tol: The tolerance of the booking times.
+    Book classes.
+    :param username: The user's username.
+    :param password: The user's password.
+    :param classes: The classes to book.
+    :param bookings: The bookings to check against.
+    :param tol: The time tolerance.
+    :return: The bookings that were booked.
     """
     user_id, token = login(username, password)
     booked = []
-    for c in today_opening_classes():
+    for c in classes:
         if is_class_in_booking(c.name, c.date, bookings, tol):
             book(user_id, c.id, token, c.date)
             booked.append(c)
     return booked
 
+def block_til_opening(opening):
+    """
+    Block until opening.
+    :param opening: The opening time.
+    """
+    now = datetime.now()
+    while now < opening:
+        now = datetime.now()
 
-def book_class_on_opening(username, password, opening, bookings, tol):
+
+def book_class_on_opening(username, password, opening, bookings, tol, block_for_opening=True):
     """
     Book classes on opening.
     :param username: User's username.
@@ -191,6 +202,7 @@ def book_class_on_opening(username, password, opening, bookings, tol):
     :param opening: The opening time.
     :param bookings: Classes with booking times.
     :param tol: The time tolerance around booking.
+    :param block_for_opening: If the program should block for the opening.
 
     :return: The classes booked.
     """
@@ -199,39 +211,38 @@ def book_class_on_opening(username, password, opening, bookings, tol):
     if day not in bookings:
         return
     # Block until opening time
-    now = datetime.now()
-    while now < opening:
-        now = datetime.now()
+    if block_for_opening:
+        block_til_opening(opening)
     # Book classes
     today_bookings = bookings[day]
-    return book_classes_today(username, password, today_bookings, tol)
+    today_classes = today_opening_classes()
+    return book_classes(username, password, today_classes, today_bookings, tol)
 
 
-def book_upcoming_classes_on_opening(username, password, bookings, tol):
+
+def book_upcoming_classes_on_opening(username, password, opening, bookings, tol, block_for_opening=True):
     """
     Book classes on that are open.
     :param username: User's username.
     :param password: User's password.
+    :param opening: The opening time.
     :param bookings: Classes with booking times.
     :param tol: The time tolerance around booking.
+    :param block_for_opening: If the program should block for the opening.
     :return: The classes booked.
     """
+    if block_for_opening:
+        block_til_opening(opening)
+
     classes_day = defaultdict(list)
     for c in upcoming_open_classes():
         if not c.is_booked:
             classes_day[calendar.day_name[c.date.weekday()].lower()].append(c)
-
-    user_id, token = login(username, password)
     booked = []
     for day, day_classes in classes_day.items():
-        bookings = bookings[day]
-        for c in day_classes:
-            if is_class_in_booking(c.name, c.date, bookings, tol):
-                book(user_id, c.id, token, c.date)
-                booked.append(c)
+        day_bookings = bookings[day]
+        booked.extend(book_classes(username, password, day_classes, day_bookings, tol))
     return booked
-
-
 
 
 def special_classes(look_back_interval=utils.FORTNIGHT):
@@ -243,8 +254,8 @@ def special_classes(look_back_interval=utils.FORTNIGHT):
     yesterday = datetime.now() - timedelta(days=1)
     classes = classes_between_dates(yesterday - look_back_interval, yesterday)
     classes = {c.name for c in classes}
-    today_classes = today_opening_classes()
-    return [c for c in today_classes if c.name not in classes]
+    open_classes = upcoming_open_classes()
+    return [c for c in open_classes if c.name not in classes]
 
 
 def book_special_classes(username, password):
