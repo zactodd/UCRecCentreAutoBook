@@ -1,5 +1,7 @@
 # AutoBook
 
+## Warning: Current implmentation will rebook cancelled classes.
+
 [![Book Todays Classes](https://github.com/zactodd/UCRecCentreAutoBook/actions/workflows/auto_book.yml/badge.svg)](https://github.com/zactodd/UCRecCentreAutoBook/actions/workflows/auto_book.yml)
 ## Edit Classes
 You can change classes by editing the json file auto_book/classes_to_book.json
