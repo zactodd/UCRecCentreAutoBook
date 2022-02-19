@@ -246,7 +246,7 @@ def special_classes(look_back_interval=utils.FORTNIGHT):
     yesterday = datetime.now() - timedelta(days=1)
     classes = classes_between_dates(yesterday - look_back_interval, yesterday)
     classes = {c.name for c in classes}
-    open_classes = upcoming_open_classes()
+    open_classes = today_opening_classes()
     return [c for c in open_classes if c.name not in classes]
 
 
