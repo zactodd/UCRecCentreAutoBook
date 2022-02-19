@@ -44,7 +44,7 @@ if __name__ == "__main__":
         bookings = json.load(f)
 
     # Book classes on opening
-    booked_classes_info = booking.book_upcoming_classes_on_opening(username, password, opening, bookings, tolerance)
+    booked_classes_info = booking.book_class_on_opening(username, password, opening, bookings, tolerance)
 
     # Book special classes
     if special_classes:
