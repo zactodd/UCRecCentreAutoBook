@@ -75,9 +75,13 @@ def classes_between_dates(date_from, date_to, token=None):
     else:
         response = requests.get(url=url)
     classes_json = json.loads(response.text)
-    return [ClassInfo(c['id'], c['name'], c['room'], c['isParticipant'],
-                      c['actualizedStartDateTime'], c['startDate'], c['endDate'])
-            for c in classes_json]
+    try:
+        return [ClassInfo(c['id'], c['name'], c['room'], c['isParticipant'],
+                          c['actualizedStartDateTime'], c['startDate'], c['endDate'])
+                for c in classes_json]
+    except Exception as e:
+        print(classes_json)
+        raise e
 
 
 def today_opening_classes():
