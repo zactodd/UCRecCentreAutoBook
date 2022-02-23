@@ -94,8 +94,8 @@ def upcoming_open_classes():
     Get all classes that are open from today until the end of the week.
     :return: ClassInfo of the classes opening this week.
     """
-    tommorrow = datetime.now() + timedelta(days=1)
-    return classes_between_dates(tommorrow, tommorrow + OPENING_DELTA)
+    tomorrow = datetime.now() + timedelta(days=1)
+    return classes_between_dates(tomorrow, tomorrow + OPENING_DELTA)
 
 
 def book(user_id, class_id, token, date):
