@@ -40,7 +40,7 @@ jobs:
           AB_PASSWORD: ${{ secrets.PASSWORD }}
         run: |
           # Run script to book new classes.
-          python ./auto_book $AB_USERNAME $AB_PASSWORD --random_delay --calendar_notification --special_classes
+          python ./auto_book $AB_USERNAME $AB_PASSWORD --random_delay --calendar_notification
 
       # These next two steps commit files changes to the repository.
       # 'diff-index --quiet HEAD' is used in case there are no changes to the calendar files
